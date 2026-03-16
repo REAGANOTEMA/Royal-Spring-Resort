@@ -20,6 +20,8 @@ import JobPostings from "./pages/JobPostings";
 import Careers from "./pages/Careers";
 import Reports from "./pages/Reports";
 import Messages from "./pages/Messages";
+import Security from "./pages/Security";
+import Media from "./pages/Media";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +50,8 @@ const App = () => (
           <Route path="/help" element={<Help />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/security" element={<Security />} />
+          <Route path="/media" element={<Media />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

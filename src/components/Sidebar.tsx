@@ -15,7 +15,9 @@ import {
   Receipt,
   Briefcase,
   FileBarChart,
-  MessageSquare
+  MessageSquare,
+  ShieldAlert,
+  ImageIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -41,6 +43,8 @@ const Sidebar = () => {
     { icon: FileBarChart, label: 'Reports', path: '/reports', roles: ['director'] },
     { icon: UserCog, label: 'HR & Staff', path: '/hr', roles: ['director', 'general_manager', 'hr'] },
     { icon: Briefcase, label: 'Job Postings', path: '/job-postings', roles: ['director', 'hr'] },
+    { icon: ImageIcon, label: 'Media Library', path: '/media', roles: ['director', 'general_manager'] },
+    { icon: ShieldAlert, label: 'Security Logs', path: '/security', roles: ['director'] },
     { icon: AlertCircle, label: 'Incidents', path: '/incidents', roles: ['director', 'general_manager', 'staff'] },
   ];
 
