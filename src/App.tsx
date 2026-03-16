@@ -1,7 +1,8 @@
+// src/App.tsx
 "use client";
 
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,17 +31,26 @@ import Media from "./pages/Media";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
+// Supabase client
+import { supabase } from "@/lib/supabaseClient";
+
+// Private route guard
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+  const user = supabase.auth.getUser(); // check login
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* Toast/Notification Providers */}
+        {/* Global Toasts */}
         <Toaster />
         <Sonner />
 
-        {/* Browser Router */}
         <BrowserRouter>
           <Routes>
             {/* Public Pages */}
@@ -50,22 +60,29 @@ const App: React.FC = () => {
             <Route path="/careers" element={<Careers />} />
             <Route path="/help" element={<Help />} />
 
-            {/* Dashboard / App Pages */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/rooms" element={<Rooms />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/guests" element={<Guests />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/hr" element={<HR />} />
-            <Route path="/job-postings" element={<JobPostings />} />
-            <Route path="/incidents" element={<Incidents />} />
-            <Route path="/billing" element={<Billing />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/security" element={<Security />} />
-            <Route path="/media" element={<Media />} />
-            <Route path="/profile" element={<Profile />} />
+            {/* Private / App Pages */}
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/rooms" element={<PrivateRoute><Rooms /></PrivateRoute>} />
+            <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
+            <Route path="/bookings" element={<PrivateRoute><Bookings /></PrivateRoute>} />
+            <Route path="/guests" element={<PrivateRoute><Guests /></PrivateRoute>} />
+            <Route path="/finance" element={<PrivateRoute><Finance /></PrivateRoute>} />
+            <Route path="/hr" element={<PrivateRoute><HR /></PrivateRoute>} />
+            <Route path="/job-postings" element={<PrivateRoute><JobPostings /></PrivateRoute>} />
+            <Route path="/incidents" element={<PrivateRoute><Incidents /></PrivateRoute>} />
+            <Route path="/billing" element={<PrivateRoute><Billing /></PrivateRoute>} />
+            <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+            <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+            <Route path="/security" element={<PrivateRoute><Security /></PrivateRoute>} />
+            <Route path="/media" element={<PrivateRoute><Media /></PrivateRoute>} />
+            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
             {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
