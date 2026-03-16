@@ -14,7 +14,8 @@ import {
   LogOut,
   Receipt,
   Briefcase,
-  User
+  FileBarChart,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -30,12 +31,14 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', roles: ['director', 'general_manager', 'hr', 'staff'] },
+    { icon: MessageSquare, label: 'Messages', path: '/messages', roles: ['director', 'general_manager', 'staff'] },
     { icon: BedDouble, label: 'Rooms', path: '/rooms', roles: ['director', 'general_manager', 'staff'] },
     { icon: CalendarCheck, label: 'Bookings', path: '/bookings', roles: ['director', 'general_manager', 'staff'] },
     { icon: Receipt, label: 'Billing', path: '/billing', roles: ['director', 'general_manager', 'staff'] },
     { icon: Users, label: 'Guests', path: '/guests', roles: ['director', 'general_manager', 'staff'] },
     { icon: Package, label: 'Inventory', path: '/inventory', roles: ['director', 'general_manager'] },
     { icon: BarChart3, label: 'Finance', path: '/finance', roles: ['director', 'general_manager'] },
+    { icon: FileBarChart, label: 'Reports', path: '/reports', roles: ['director'] },
     { icon: UserCog, label: 'HR & Staff', path: '/hr', roles: ['director', 'general_manager', 'hr'] },
     { icon: Briefcase, label: 'Job Postings', path: '/job-postings', roles: ['director', 'hr'] },
     { icon: AlertCircle, label: 'Incidents', path: '/incidents', roles: ['director', 'general_manager', 'staff'] },

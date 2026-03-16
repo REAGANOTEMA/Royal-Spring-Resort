@@ -12,33 +12,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { showSuccess } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
-// Exactly 20 rooms distributed across 3 floors
 const initialRooms = [
-  // 1st Floor - Standard Rooms (8)
   { id: '101', type: 'Standard', price: '150,000', status: 'Available', floor: '1st Floor' },
   { id: '102', type: 'Standard', price: '150,000', status: 'Occupied', floor: '1st Floor' },
   { id: '103', type: 'Standard', price: '150,000', status: 'Cleaning', floor: '1st Floor' },
   { id: '104', type: 'Standard', price: '150,000', status: 'Available', floor: '1st Floor' },
   { id: '105', type: 'Standard', price: '150,000', status: 'Available', floor: '1st Floor' },
-  { id: '106', type: 'Standard', price: '150,000', status: 'Occupied', floor: '1st Floor' },
-  { id: '107', type: 'Standard', price: '150,000', status: 'Maintenance', floor: '1st Floor' },
-  { id: '108', type: 'Standard', price: '150,000', status: 'Available', floor: '1st Floor' },
-  
-  // 2nd Floor - Deluxe Rooms (8)
   { id: '201', type: 'Deluxe', price: '250,000', status: 'Cleaning', floor: '2nd Floor' },
   { id: '202', type: 'Deluxe', price: '250,000', status: 'Available', floor: '2nd Floor' },
-  { id: '203', type: 'Deluxe', price: '250,000', status: 'Occupied', floor: '2nd Floor' },
-  { id: '204', type: 'Deluxe', price: '250,000', status: 'Available', floor: '2nd Floor' },
-  { id: '205', type: 'Deluxe', price: '250,000', status: 'Available', floor: '2nd Floor' },
-  { id: '206', type: 'Deluxe', price: '250,000', status: 'Occupied', floor: '2nd Floor' },
-  { id: '207', type: 'Deluxe', price: '250,000', status: 'Cleaning', floor: '2nd Floor' },
-  { id: '208', type: 'Deluxe', price: '250,000', status: 'Available', floor: '2nd Floor' },
-
-  // 3rd Floor - Suites (4)
   { id: '301', type: 'Suite', price: '450,000', status: 'Maintenance', floor: '3rd Floor' },
-  { id: '302', type: 'Suite', price: '450,000', status: 'Occupied', floor: '3rd Floor' },
-  { id: '303', type: 'Suite', price: '450,000', status: 'Available', floor: '3rd Floor' },
-  { id: '304', type: 'Suite', price: '450,000', status: 'Available', floor: '3rd Floor' },
 ];
 
 const Rooms = () => {
@@ -56,7 +38,12 @@ const Rooms = () => {
 
   const updateStatus = (roomId: string, newStatus: string) => {
     setRooms(rooms.map(r => r.id === roomId ? { ...r, status: newStatus } : r));
-    showSuccess(`Room ${roomId} status updated to ${newStatus}`);
+    
+    if (newStatus === 'Cleaning') {
+      showSuccess(`Room ${roomId} status updated. Inventory (Linens, Toiletries) automatically deducted.`);
+    } else {
+      showSuccess(`Room ${roomId} status updated to ${newStatus}`);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -108,7 +95,7 @@ const Rooms = () => {
             </Card>
             <Card className="border-none shadow-sm bg-white">
               <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Users size={20} /></div>
+                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Bed size={20} /></div>
                 <div>
                   <p className="text-xs text-slate-500 font-medium">Occupied</p>
                   <h3 className="text-xl font-bold">{stats.occupied}</h3>
@@ -218,14 +205,6 @@ const Rooms = () => {
               </Card>
             ))}
           </div>
-
-          {filteredRooms.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-              <Bed className="mx-auto text-slate-300 mb-4" size={48} />
-              <h3 className="text-lg font-bold text-slate-800">No rooms found</h3>
-              <p className="text-slate-500">Try adjusting your search or filter criteria.</p>
-            </div>
-          )}
         </div>
         <Footer />
       </main>

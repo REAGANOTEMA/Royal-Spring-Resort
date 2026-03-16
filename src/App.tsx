@@ -18,6 +18,8 @@ import OnlineBooking from "./pages/OnlineBooking";
 import Help from "./pages/Help";
 import JobPostings from "./pages/JobPostings";
 import Careers from "./pages/Careers";
+import Reports from "./pages/Reports";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +46,8 @@ const App = () => (
           <Route path="/incidents" element={<Incidents />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
