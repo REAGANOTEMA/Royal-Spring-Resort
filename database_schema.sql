@@ -1,52 +1,57 @@
--- Rooms Table
-CREATE TABLE rooms (
-  id TEXT PRIMARY KEY,
-  type TEXT NOT NULL,
-  price DECIMAL NOT NULL,
-  status TEXT DEFAULT 'Available',
-  floor TEXT
-);
+-- Royal Springs ERP Database Schema
 
--- Staff Profiles & HR Control
-CREATE TABLE profiles (
-  id UUID REFERENCES auth.users ON DELETE CASCADE,
-  full_name TEXT,
-  role TEXT DEFAULT 'staff',
+-- 1. Staff Table
+CREATE TABLE staff (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  role TEXT NOT NULL, -- director, gm, hr, staff
   department TEXT,
-  salary DECIMAL,
-  warnings INTEGER DEFAULT 0,
-  deductions DECIMAL DEFAULT 0,
-  is_approved BOOLEAN DEFAULT false,
-  PRIMARY KEY (id)
+  salary DECIMAL(12,2),
+  advance_balance DECIMAL(12,2) DEFAULT 0,
+  leave_balance INTEGER DEFAULT 21,
+  image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Attendance Tracking
-CREATE TABLE attendance (
-  id BIGSERIAL PRIMARY KEY,
-  staff_id UUID REFERENCES profiles(id),
-  clock_in TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  clock_out TIMESTAMP WITH TIME ZONE,
-  work_date DATE DEFAULT CURRENT_DATE
+-- 2. Inventory Table
+CREATE TABLE inventory (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  stock_level INTEGER NOT NULL DEFAULT 0,
+  min_stock_level INTEGER DEFAULT 10,
+  unit TEXT DEFAULT 'pcs',
+  last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Bookings & Transactions
+-- 3. Rooms Table
+CREATE TABLE rooms (
+  id TEXT PRIMARY KEY, -- Room Number
+  type TEXT NOT NULL, -- Standard, Deluxe, Suite
+  price DECIMAL(12,2) NOT NULL,
+  status TEXT DEFAULT 'Available', -- Available, Occupied, Cleaning, Maintenance
+  floor TEXT,
+  image_url TEXT
+);
+
+-- 4. Bookings Table
 CREATE TABLE bookings (
-  id TEXT PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   guest_name TEXT NOT NULL,
   room_id TEXT REFERENCES rooms(id),
   check_in DATE NOT NULL,
   check_out DATE NOT NULL,
-  amount DECIMAL NOT NULL,
   status TEXT DEFAULT 'Confirmed',
-  payment_account TEXT DEFAULT '4187612853948627'
+  total_amount DECIMAL(12,2),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Inventory & Assets
-CREATE TABLE inventory (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  category TEXT,
-  stock INTEGER,
-  min_stock INTEGER,
-  unit TEXT
+-- 5. Audit Logs
+CREATE TABLE audit_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_name TEXT,
+  action TEXT,
+  ip_address TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

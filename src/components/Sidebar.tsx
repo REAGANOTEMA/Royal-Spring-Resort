@@ -19,7 +19,8 @@ import {
   ShieldAlert,
   ImageIcon,
   Menu,
-  X
+  X,
+  User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -78,7 +79,14 @@ const SidebarContent = ({ role, userName, location, onClose }: any) => {
       </nav>
 
       <div className="p-6 border-t border-slate-900 bg-slate-950/50">
-        <div className="mb-6 flex items-center gap-3">
+        <Link
+          to="/profile"
+          onClick={onClose}
+          className={cn(
+            "mb-6 flex items-center gap-3 p-3 rounded-xl transition-colors",
+            location.pathname === '/profile' ? "bg-blue-900/30 border border-blue-800" : "hover:bg-slate-900"
+          )}
+        >
           <div className="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white font-bold shadow-inner">
             {userName?.charAt(0).toUpperCase()}
           </div>
@@ -86,7 +94,7 @@ const SidebarContent = ({ role, userName, location, onClose }: any) => {
             <p className="text-xs font-bold text-white truncate">{userName}</p>
             <p className="text-[10px] text-blue-500 font-bold uppercase tracking-wider truncate">{role?.replace('_', ' ')}</p>
           </div>
-        </div>
+        </Link>
         <Link
           to="/login"
           onClick={() => {
