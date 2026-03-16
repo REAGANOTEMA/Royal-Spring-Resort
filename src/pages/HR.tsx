@@ -15,7 +15,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { showSuccess, showError } from "@/utils/toast";
 import { cn } from "@/lib/utils";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
+
+// Fetch Supabase URL and Key from environment variables
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY;
 
 interface StaffType {
   id: string;
@@ -38,7 +42,7 @@ interface CheckInLog {
 }
 
 const HR: React.FC = () => {
-  const supabase = createClientComponentClient();
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);  // Initialize Supabase client
   const [staff, setStaff] = useState<StaffType[]>([]);
   const [logs, setLogs] = useState<CheckInLog[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
