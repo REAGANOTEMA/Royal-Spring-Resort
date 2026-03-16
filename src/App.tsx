@@ -1,4 +1,5 @@
 // src/App.tsx
+
 "use client";
 
 import React from "react";
@@ -44,6 +45,12 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
+  // Accessing environment variables
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  console.log(supabaseUrl, supabaseAnonKey); // Debugging purposes to ensure they're accessible
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
