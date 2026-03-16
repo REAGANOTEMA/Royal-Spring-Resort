@@ -1,29 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { UserCog, Plus, Search, FileText, CheckCircle, Camera, Upload } from 'lucide-react';
+import { UserCog, Plus, Search, FileText, Calendar, Target, Banknote, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { showSuccess } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
-const HR = () => {
-  const [staff, setStaff] = useState<any[]>([
-    { id: 'ST-001', name: 'Alice Johnson', role: 'Front Desk Manager', department: 'Reception', status: 'Active', salary: '1,200,000', image: null },
-    { id: 'ST-002', name: 'Bob Williams', role: 'Head Chef', department: 'Kitchen', status: 'Active', salary: '2,500,000', image: null },
-    { id: 'ST-010', name: 'Joseph Byabazaire', role: 'Director', department: 'Management', status: 'Active', salary: 'N/A', image: null },
-  ]);
+const staffData = [
+  { id: 'ST-001', name: 'Alice Johnson', role: 'Front Desk', salary: '1,200,000', advance: '100,000', deduction: '50,000', net: '1,050,000' },
+  { id: 'ST-002', name: 'Bob Williams', role: 'Chef', salary: '2,500,000', advance: '0', deduction: '120,000', net: '2,380,000' },
+];
 
-  const handleImageUpload = (id: string) => {
-    showSuccess("Profile image uploaded successfully!");
-    // In a real app, this would handle file input and Supabase storage
+const leaveRequests = [
+  { id: 'LV-101', name: 'Alice Johnson', type: 'Holiday', start: '2024-06-01', end: '2024-06-05', status: 'Pending' },
+  { id: 'LV-102', name: 'Bob Williams', type: 'Sick Leave', start: '2024-05-20', end: '2024-05-22', status: 'Approved' },
+];
+
+const HR = () => {
+  const handleApproveLeave = (id: string) => {
+    showSuccess(`Leave request ${id} approved.`);
   };
 
   return (
@@ -31,81 +33,48 @@ const HR = () => {
       <Sidebar />
       <main className="flex-1 flex flex-col">
         <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-800">HR Control Center</h2>
-          <div className="flex gap-3">
-            <Button variant="outline" className="font-bold border-slate-200">
-              <FileText size={18} className="mr-2" /> Export Payroll
-            </Button>
-            <Button className="bg-blue-700 hover:bg-blue-800 font-bold">
-              <Plus size={18} className="mr-2" /> Add New Staff
-            </Button>
-          </div>
+          <h2 className="text-xl font-bold text-slate-800">HR & Payroll Management</h2>
+          <Button className="bg-blue-700 hover:bg-blue-800 font-bold">
+            <Plus size={18} className="mr-2" /> Add Staff Member
+          </Button>
         </header>
 
         <div className="p-8 space-y-8">
-          <Tabs defaultValue="staff" className="w-full">
-            <TabsList className="bg-white border p-1 rounded-xl mb-8">
-              <TabsTrigger value="staff" className="rounded-lg font-bold">Staff Directory</TabsTrigger>
-              <TabsTrigger value="approvals" className="rounded-lg font-bold">Pending Approvals</TabsTrigger>
-              <TabsTrigger value="disciplinary" className="rounded-lg font-bold">Disciplinary</TabsTrigger>
+          <Tabs defaultValue="payroll" className="w-full">
+            <TabsList className="bg-white border mb-6">
+              <TabsTrigger value="payroll">Payroll & Salaries</TabsTrigger>
+              <TabsTrigger value="leave">Leave Management</TabsTrigger>
+              <TabsTrigger value="targets">Performance Targets</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="staff">
-              <Card className="border-none shadow-xl overflow-hidden bg-white rounded-2xl">
-                <CardHeader className="border-b px-8 py-6">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-xl font-bold">Active Staff Members</CardTitle>
-                    <div className="relative w-80">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                      <Input className="pl-10 h-11 bg-slate-50 border-none" placeholder="Search staff..." />
-                    </div>
-                  </div>
+            <TabsContent value="payroll">
+              <Card className="border-none shadow-sm overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-lg">Monthly Payroll (May 2024)</CardTitle>
+                  <Button variant="outline" size="sm"><FileText size={16} className="mr-2" /> Generate Payslips</Button>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
-                    <TableHeader className="bg-slate-50/50">
+                    <TableHeader className="bg-slate-50">
                       <TableRow>
-                        <TableHead className="px-8 font-bold">Staff Member</TableHead>
-                        <TableHead className="font-bold">Department</TableHead>
-                        <TableHead className="font-bold">Status</TableHead>
-                        <TableHead className="text-right font-bold">Salary (UGX)</TableHead>
-                        <TableHead className="text-right px-8 font-bold">Actions</TableHead>
+                        <TableHead>Staff Name</TableHead>
+                        <TableHead>Base Salary</TableHead>
+                        <TableHead>Advances</TableHead>
+                        <TableHead>Deductions</TableHead>
+                        <TableHead className="text-right font-bold">Net Pay (UGX)</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {staff.map((s) => (
-                        <TableRow key={s.id} className="hover:bg-slate-50/50 transition-colors">
-                          <TableCell className="px-8">
-                            <div className="flex items-center gap-4">
-                              <div className="relative group">
-                                <Avatar className="h-12 w-12 border-2 border-white shadow-md">
-                                  <AvatarImage src={s.image} />
-                                  <AvatarFallback className="bg-blue-700 text-white font-bold">
-                                    {s.name.split(' ').map((n: any) => n[0]).join('')}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <button 
-                                  onClick={() => handleImageUpload(s.id)}
-                                  className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <Camera size={16} className="text-white" />
-                                </button>
-                              </div>
-                              <div>
-                                <p className="font-bold text-slate-900">{s.name}</p>
-                                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">{s.role}</p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-bold">{s.department}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className="bg-green-100 text-green-700 font-bold rounded-full px-3 py-1">Active</Badge>
-                          </TableCell>
-                          <TableCell className="text-right font-black text-slate-900">{s.salary}</TableCell>
-                          <TableCell className="text-right px-8">
-                            <Button variant="ghost" size="sm" className="text-blue-700 font-bold hover:bg-blue-50">Edit Profile</Button>
+                      {staffData.map((s) => (
+                        <TableRow key={s.id}>
+                          <TableCell className="font-semibold">{s.name}</TableCell>
+                          <TableCell>{s.salary}</TableCell>
+                          <TableCell className="text-rose-600">-{s.advance}</TableCell>
+                          <TableCell className="text-rose-600">-{s.deduction}</TableCell>
+                          <TableCell className="text-right font-bold text-blue-700">{s.net}</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm">Edit</Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -113,6 +82,72 @@ const HR = () => {
                   </Table>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="leave">
+              <Card className="border-none shadow-sm overflow-hidden">
+                <CardHeader><CardTitle className="text-lg">Holiday & Leave Requests</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader className="bg-slate-50">
+                      <TableRow>
+                        <TableHead>Staff Name</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {leaveRequests.map((l) => (
+                        <TableRow key={l.id}>
+                          <TableCell className="font-semibold">{l.name}</TableCell>
+                          <TableCell><Badge variant="outline">{l.type}</Badge></TableCell>
+                          <TableCell>{l.start} to {l.end}</TableCell>
+                          <TableCell>
+                            <Badge className={cn(
+                              l.status === 'Approved' ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                            )}>
+                              {l.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {l.status === 'Pending' && (
+                              <Button size="sm" onClick={() => handleApproveLeave(l.id)}>Approve</Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="targets">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="border-none shadow-sm">
+                  <CardHeader><CardTitle className="text-lg">Departmental Targets</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    {[
+                      { dept: 'Reception', target: '90% Guest Satisfaction', progress: 85 },
+                      { dept: 'Housekeeping', target: 'Room Turnaround < 30m', progress: 70 },
+                      { dept: 'Kitchen', target: 'Zero Food Waste Initiative', progress: 45 },
+                    ].map((t) => (
+                      <div key={t.dept} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="font-medium">{t.dept}</span>
+                          <span className="text-slate-500">{t.progress}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-blue-600" style={{ width: `${t.progress}%` }} />
+                        </div>
+                        <p className="text-xs text-slate-400">{t.target}</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

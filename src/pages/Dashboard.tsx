@@ -182,6 +182,37 @@ const Dashboard = () => {
               </Card>
             )}
 
+            {/* Personal HR Info for Staff */}
+            {role === 'staff' && (
+              <Card className="shadow-md border-none">
+                <CardHeader><CardTitle className="text-lg">My Employment Info</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-xl">
+                      <p className="text-xs text-slate-500 uppercase font-bold">Leave Balance</p>
+                      <p className="text-xl font-black text-blue-600">12 Days</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl">
+                      <p className="text-xs text-slate-500 uppercase font-bold">Next Payday</p>
+                      <p className="text-xl font-black text-emerald-600">June 1st</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <p className="text-sm font-bold">My Performance Targets</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span>Guest Satisfaction</span>
+                        <span className="font-bold">85%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-600" style={{ width: '85%' }} />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="shadow-md border-none">
               <CardHeader><CardTitle className="text-lg">Performance Overview</CardTitle></CardHeader>
               <CardContent className="h-[300px]">
