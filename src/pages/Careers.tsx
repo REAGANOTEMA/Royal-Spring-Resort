@@ -26,31 +26,34 @@ const jobs = [
 ];
 
 const Careers = () => {
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": "Front Desk Agent",
+    "description": "Professional Front Desk Agent for Royal Springs Resort...",
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": "Royal Springs Resort",
+      "sameAs": "https://royalspringsresort.com"
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Kampala",
+        "addressRegion": "Central",
+        "addressCountry": "UG"
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Google Job Search Schema */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org/",
-          "@type": "JobPosting",
-          "title": "Front Desk Agent",
-          "description": "Professional Front Desk Agent for Royal Springs Resort...",
-          "hiringOrganization": {
-            "@type": "Organization",
-            "name": "Royal Springs Resort",
-            "sameAs": "https://royalspringsresort.com"
-          },
-          "jobLocation": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Kampala",
-              "addressRegion": "Central",
-              "addressCountry": "UG"
-            }
-          }
-        })}
-      </script>
+      <script 
+        type="application/ld+json" 
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <nav className="h-20 border-b px-6 md:px-12 flex items-center justify-between sticky top-0 bg-white z-50">
         <div className="flex items-center gap-2">
