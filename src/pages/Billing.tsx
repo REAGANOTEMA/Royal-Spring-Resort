@@ -3,85 +3,55 @@
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { Receipt, Search, Printer, Download, CreditCard, Plus, User, CheckCircle2 } from 'lucide-react';
+import DeleteDialog from '@/components/DeleteDialog';
+import { Receipt, Search, Printer, Download, CreditCard, Plus, User, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { showSuccess } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
-const billingData = [
+const initialBilling = [
   { id: 'INV-2024-001', guest: 'John Doe', room: '204', amount: '850,000', status: 'Paid', date: '2024-05-24' },
   { id: 'INV-2024-002', guest: 'Sarah Smith', room: '105', amount: '150,000', status: 'Pending', date: '2024-05-24' },
-  { id: 'INV-2024-003', guest: 'Michael Brown', room: '301', amount: '1,450,000', status: 'Paid', date: '2024-05-23' },
-  { id: 'INV-2024-004', guest: 'Emma Wilson', room: '208', amount: '320,000', status: 'Overdue', date: '2024-05-20' },
 ];
 
 const Billing = () => {
-  const handlePrint = (invoice: any) => {
-    showSuccess(`Preparing receipt for ${invoice.id}...`);
-    
-    // Create a hidden print frame or open a new window
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Receipt - ${invoice.id}</title>
-            <style>
-              body { font-family: sans-serif; padding: 40px; color: #333; }
-              .header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
-              .logo { height: 80px; margin-bottom: 10px; }
-              .details { display: flex; justify-content: space-between; margin-bottom: 40px; }
-              .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-              .table th, .table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-              .total { text-align: right; font-size: 24px; font-weight: bold; color: #1d4ed8; }
-              .footer { text-align: center; margin-top: 60px; font-size: 12px; color: #666; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <img src="/logo.png" class="logo" />
-              <h1>Royal Springs Resort</h1>
-              <p>Official Payment Receipt</p>
-            </div>
-            <div class="details">
-              <div>
-                <p><strong>Guest:</strong> ${invoice.guest}</p>
-                <p><strong>Room:</strong> ${invoice.room}</p>
-              </div>
-              <div>
-                <p><strong>Invoice ID:</strong> ${invoice.id}</p>
-                <p><strong>Date:</strong> ${invoice.date}</p>
-              </div>
-            </div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Amount (UGX)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Accommodation & Services</td>
-                  <td>${invoice.amount}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="total">Total Paid: UGX ${invoice.amount}</div>
-            <div class="footer">
-              <p>Thank you for staying with Royal Springs Resort.</p>
-              <p>This is a computer-generated receipt.</p>
-            </div>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
-    }
+  const [invoices, setInvoices] = useState(initialBilling);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [newInvoice, setNewInvoice] = useState({ guest: '', room: '', amount: '' });
+
+  const handleAddInvoice = (e: React.FormEvent) => {
+    e.preventDefault();
+    const invoiceToAdd = {
+      id: `INV-2024-00${invoices.length + 1}`,
+      guest: newInvoice.guest,
+      room: newInvoice.room,
+      amount: newInvoice.amount,
+      status: 'Pending',
+      date: new Date().toISOString().split('T')[0]
+    };
+    setInvoices([invoiceToAdd, ...invoices]);
+    setIsAddModalOpen(false);
+    showSuccess(`Invoice created for ${newInvoice.guest}.`);
+    setNewInvoice({ guest: '', room: '', amount: '' });
+  };
+
+  const handleDelete = () => {
+    setInvoices(invoices.filter(inv => inv.id !== selectedId));
+    setIsDeleteModalOpen(false);
+    showSuccess("Invoice deleted.");
+  };
+
+  const handlePrint = (id: string) => {
+    showSuccess(`Sending ${id} to printer...`);
+    window.print();
   };
 
   return (
@@ -90,50 +60,17 @@ const Billing = () => {
       <main className="flex-1 flex flex-col">
         <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
           <h2 className="text-xl font-bold text-slate-800">Guest Billing & Invoices</h2>
-          <Button className="bg-blue-700 hover:bg-blue-800 font-bold">
+          <Button className="bg-blue-700 hover:bg-blue-800 font-bold" onClick={() => setIsAddModalOpen(true)}>
             <Plus size={18} className="mr-2" /> Create New Invoice
           </Button>
         </header>
 
         <div className="p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-none shadow-lg bg-white overflow-hidden group">
-              <div className="h-1 bg-green-500 w-full" />
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-green-50 text-green-600 rounded-2xl group-hover:scale-110 transition-transform"><CreditCard size={28} /></div>
-                <div>
-                  <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Collected</p>
-                  <h3 className="text-3xl font-black text-slate-900">UGX 2.4M</h3>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-none shadow-lg bg-white overflow-hidden group">
-              <div className="h-1 bg-blue-500 w-full" />
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform"><Receipt size={28} /></div>
-                <div>
-                  <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Pending Invoices</p>
-                  <h3 className="text-3xl font-black text-slate-900">14</h3>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-none shadow-lg bg-white overflow-hidden group">
-              <div className="h-1 bg-red-500 w-full" />
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform"><User size={28} /></div>
-                <div>
-                  <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Outstanding</p>
-                  <h3 className="text-3xl font-black text-slate-900">UGX 1.8M</h3>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card className="border-none shadow-xl overflow-hidden bg-white rounded-2xl">
             <CardHeader className="border-b px-8 py-6">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex justify-between items-center">
                 <CardTitle className="text-xl font-bold">Invoice History</CardTitle>
-                <div className="relative w-full md:w-80">
+                <div className="relative w-80">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <Input className="pl-10 h-11 bg-slate-50 border-none" placeholder="Search guest or invoice ID..." />
                 </div>
@@ -146,27 +83,21 @@ const Billing = () => {
                     <TableHead className="font-bold px-8">Invoice ID</TableHead>
                     <TableHead className="font-bold">Guest</TableHead>
                     <TableHead className="font-bold">Room</TableHead>
-                    <TableHead className="font-bold">Date</TableHead>
                     <TableHead className="font-bold">Status</TableHead>
                     <TableHead className="font-bold text-right">Amount (UGX)</TableHead>
                     <TableHead className="font-bold text-right px-8">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {billingData.map((invoice) => (
+                  {invoices.map((invoice) => (
                     <TableRow key={invoice.id} className="hover:bg-slate-50/50 transition-colors">
                       <TableCell className="font-bold text-slate-500 px-8">{invoice.id}</TableCell>
                       <TableCell className="font-bold text-slate-900">{invoice.guest}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-slate-100 border-slate-200 font-bold">Room {invoice.room}</Badge>
-                      </TableCell>
-                      <TableCell className="text-slate-500 font-medium">{invoice.date}</TableCell>
+                      <TableCell><Badge variant="outline">Room {invoice.room}</Badge></TableCell>
                       <TableCell>
                         <Badge className={cn(
                           "px-3 py-1 font-bold rounded-full",
-                          invoice.status === 'Paid' ? "bg-green-100 text-green-700" :
-                          invoice.status === 'Pending' ? "bg-amber-100 text-amber-700" :
-                          "bg-red-100 text-red-700"
+                          invoice.status === 'Paid' ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
                         )}>
                           {invoice.status}
                         </Badge>
@@ -174,18 +105,8 @@ const Billing = () => {
                       <TableCell className="text-right font-black text-blue-700">{invoice.amount}</TableCell>
                       <TableCell className="text-right px-8">
                         <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-blue-600 hover:bg-blue-50"
-                            onClick={() => handlePrint(invoice)}
-                            title="Print Receipt"
-                          >
-                            <Printer size={18} />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-slate-600 hover:bg-slate-100">
-                            <Download size={18} />
-                          </Button>
+                          <Button variant="ghost" size="icon" className="text-blue-600" onClick={() => handlePrint(invoice.id)}><Printer size={18} /></Button>
+                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => { setSelectedId(invoice.id); setIsDeleteModalOpen(true); }}><Trash2 size={18} /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -195,6 +116,33 @@ const Billing = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Create New Invoice</DialogTitle></DialogHeader>
+            <form onSubmit={handleAddInvoice} className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Guest Name</Label>
+                <Input value={newInvoice.guest} onChange={e => setNewInvoice({...newInvoice, guest: e.target.value})} required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Room Number</Label>
+                  <Input value={newInvoice.room} onChange={e => setNewInvoice({...newInvoice, room: e.target.value})} required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Total Amount (UGX)</Label>
+                  <Input value={newInvoice.amount} onChange={e => setNewInvoice({...newInvoice, amount: e.target.value})} required />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit" className="w-full bg-blue-700">Generate Invoice</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <DeleteDialog isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} />
         <Footer />
       </main>
     </div>

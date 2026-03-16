@@ -1,27 +1,44 @@
--- Function to calculate work hours automatically on clock-out
-CREATE OR REPLACE FUNCTION calculate_work_hours()
+-- Royal Springs ERP Database Logic
+
+-- 1. Function to deduct inventory when a room is marked as 'Cleaning'
+CREATE OR REPLACE FUNCTION deduct_cleaning_supplies()
 RETURNS TRIGGER AS $$
 BEGIN
-  IF NEW.clock_out IS NOT NULL THEN
-    -- Calculate hours and update a summary (optional) or just keep for reporting
-    -- This is where you'd add logic to update a 'total_hours' column if needed
+  IF NEW.status = 'Cleaning' AND OLD.status != 'Cleaning' THEN
+    -- Deduct 1 set of linens
+    UPDATE inventory 
+    SET stock_level = stock_level - 1 
+    WHERE name ILIKE '%Linens%' AND stock_level > 0;
+    
+    -- Deduct 2 bars of soap/toiletries
+    UPDATE inventory 
+    SET stock_level = stock_level - 2 
+    WHERE name ILIKE '%Soap%' OR name ILIKE '%Toiletries%' AND stock_level > 0;
+    
+    -- Log the activity
+    INSERT INTO audit_logs (user_name, action)
+    VALUES ('System', 'Auto-deducted cleaning supplies for Room ' || NEW.id);
   END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger for attendance
-CREATE TRIGGER on_clock_out
-  BEFORE UPDATE ON attendance
-  FOR EACH ROW
-  EXECUTE FUNCTION calculate_work_hours();
+-- 2. Trigger for Room Status Change
+CREATE TRIGGER on_room_cleaning
+AFTER UPDATE ON rooms
+FOR EACH ROW
+EXECUTE FUNCTION deduct_cleaning_supplies();
 
--- Security: Ensure only HR/Director can approve profiles
-CREATE POLICY "HR and Directors can update profiles"
-  ON profiles
-  FOR UPDATE
-  USING (
-    auth.uid() IN (
-      SELECT id FROM profiles WHERE role IN ('hr', 'director', 'general_manager')
-    )
-  );
+-- 3. Function to update 'last_updated' timestamp
+CREATE OR REPLACE FUNCTION update_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.last_updated = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_inventory_modtime
+BEFORE UPDATE ON inventory
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_column();

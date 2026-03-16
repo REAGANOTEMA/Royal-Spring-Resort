@@ -28,19 +28,21 @@ const AIChat = () => {
     setMessages(prev => [...prev, userMsg]);
     setInput('');
 
-    // Simulate AI Response
+    // Simulate AI Response with specific resort knowledge
     setTimeout(() => {
       let botResponse = "I'll check that for you. Would you like to speak with a human receptionist?";
       const lowerInput = input.toLowerCase();
       
-      if (lowerInput.includes('price') || lowerInput.includes('cost')) {
-        botResponse = "Our rooms start at UGX 150,000 for Standard, UGX 250,000 for Deluxe, and UGX 450,000 for Suites.";
+      if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('rate')) {
+        botResponse = "Our rooms start at UGX 150,000 for Standard, UGX 250,000 for Deluxe, and UGX 450,000 for Suites. All rates include breakfast.";
       } else if (lowerInput.includes('pool') || lowerInput.includes('swimming')) {
-        botResponse = "Yes! We have a beautiful infinity pool open from 6:00 AM to 9:00 PM daily.";
-      } else if (lowerInput.includes('food') || lowerInput.includes('restaurant')) {
-        botResponse = "Our restaurant serves both local Ugandan delicacies and international cuisine 24/7.";
-      } else if (lowerInput.includes('location') || lowerInput.includes('where')) {
-        botResponse = "We are located in a serene environment surrounded by lush vegetation, perfect for relaxation.";
+        botResponse = "Yes! We have a beautiful infinity pool open from 6:00 AM to 9:00 PM daily for all guests.";
+      } else if (lowerInput.includes('food') || lowerInput.includes('restaurant') || lowerInput.includes('eat')) {
+        botResponse = "Our restaurant serves both local Ugandan delicacies and international cuisine. We are open 24/7 for your convenience.";
+      } else if (lowerInput.includes('location') || lowerInput.includes('where') || lowerInput.includes('iganga')) {
+        botResponse = "We are located in Iganga, Uganda, in a serene environment surrounded by lush vegetation, perfect for relaxation.";
+      } else if (lowerInput.includes('book') || lowerInput.includes('reserve')) {
+        botResponse = "You can book directly through our website by clicking the 'Book Now' button at the top of the page!";
       }
 
       setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
