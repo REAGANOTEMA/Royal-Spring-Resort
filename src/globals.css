@@ -1,27 +1,62 @@
 /* globals.css */
 
-/* Tailwind Base, Components, and Utilities */
+/* ============================= */
+/* Tailwind Base, Components, Utilities */
+/* ============================= */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base Layer: default styling */
+/* ============================= */
+/* Base Layer: Default Styling */
+/* ============================= */
 @layer base {
+  /* Reset default margins/padding */
   * {
-    @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
+  /* Body defaults */
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-white text-gray-900 font-sans;
+  }
+
+  /* Headings default */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-800;
+  }
+
+  /* Links default */
+  a {
+    @apply text-blue-600 hover:text-blue-800 no-underline;
+  }
+
+  /* Buttons default */
+  button {
+    @apply cursor-pointer;
+  }
+
+  /* Images default */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* Inputs, selects, textareas default */
+  input, select, textarea {
+    @apply border border-gray-300 rounded-md p-2;
   }
 }
 
+/* ============================= */
 /* Print Styles */
+/* ============================= */
 @media print {
   .no-print {
     display: none !important;
   }
-  
+
   body {
     background: white !important;
     padding: 0 !important;
@@ -41,4 +76,11 @@
     width: 100% !important;
     padding: 40px !important;
   }
+}
+
+/* ============================= */
+/* Utility Enhancements */
+/* ============================= */
+html {
+  scroll-behavior: smooth;
 }

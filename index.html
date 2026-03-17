@@ -31,18 +31,16 @@
     <meta property="og:url" content="https://royal-spring-hotel.onrender.com" />
     <meta property="og:type" content="website" />
 
-    <!-- Tailwind / Global CSS -->
-    <link rel="stylesheet" href="/globals.css" />
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind / global styles are imported via React, no <link> needed here -->
   </head>
 
   <body class="bg-slate-50 font-sans">
-    <!-- React App Root -->
+    <!-- React app root -->
     <div id="root"></div>
 
-    <!-- React Entry (Vite Module) -->
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Vite injects the compiled JS automatically; no manual script needed -->
   </body>
 </html>
