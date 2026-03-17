@@ -5,15 +5,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ... existing variables ... */
-
+/* Base Layer: default styling */
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
