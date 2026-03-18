@@ -4,7 +4,7 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import {
-  User, Mail, Briefcase, Calendar, Banknote, Camera, ShieldCheck, Lock, Wallet, TrendingDown, Phone, MapPin, Clock, Save
+  User, Mail, Briefcase, Calendar, Banknote, Camera, ShieldCheck, Lock, Wallet, TrendingDown, Phone, MapPin, Clock, Save, Building2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,6 @@ const Profile: React.FC = () => {
       setStaff(staffData);
       setFormData(staffData);
       
-      // Fetch attendance for this staff
       const { data: attendData } = await supabase
         .from('check_in_logs')
         .select('*')
@@ -105,7 +104,6 @@ const Profile: React.FC = () => {
         </header>
 
         <div className="p-8 max-w-6xl mx-auto w-full space-y-8">
-          {/* Header Card */}
           <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
             <div className="h-40 bg-gradient-to-r from-blue-700 via-indigo-800 to-slate-900" />
             <CardContent className="relative pt-0 pb-10 px-10">
@@ -124,9 +122,12 @@ const Profile: React.FC = () => {
                 </div>
                 <div className="flex-1 pb-4">
                   <h1 className="text-4xl font-black text-slate-900 tracking-tighter">{staff.name}</h1>
-                  <div className="flex items-center gap-3 mt-2">
-                    <Badge className="bg-blue-100 text-blue-700 font-black px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
-                      {staff.role}
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    <Badge className="bg-blue-700 text-white font-black px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+                      {staff.position}
+                    </Badge>
+                    <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 font-black px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+                      {staff.department}
                     </Badge>
                     <span className="text-slate-400 font-bold text-sm flex items-center gap-1">
                       <Calendar size={14} /> Joined {staff.joined_at}
@@ -165,7 +166,6 @@ const Profile: React.FC = () => {
           </Card>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Stats & Attendance */}
             <Card className="lg:col-span-2 border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
               <CardHeader className="bg-slate-900 text-white p-8">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -203,18 +203,17 @@ const Profile: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Bio & Payroll */}
             <div className="space-y-8">
               <Card className="border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
                 <CardHeader className="bg-slate-900 text-white p-8">
-                  <CardTitle className="text-lg font-bold">About Me</CardTitle>
+                  <CardTitle className="text-lg font-bold">Professional Bio</CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
                   {isEditing ? (
                     <Textarea 
                       value={formData.bio} 
                       onChange={e => setFormData({...formData, bio: e.target.value})} 
-                      placeholder="Tell us about your role..." 
+                      placeholder="Tell us about your professional background..." 
                       className="min-h-[150px] rounded-2xl"
                     />
                   ) : (

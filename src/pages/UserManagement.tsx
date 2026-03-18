@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import { UserPlus, Shield, Trash2, Mail, Key, UserCheck, ShieldCheck, Fingerprint } from "lucide-react";
+import { UserPlus, Shield, Trash2, Mail, Key, UserCheck, ShieldCheck, Briefcase, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,13 @@ import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
   const [users, setUsers] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ email: "", password: "", role: "staff" });
+  const [formData, setFormData] = useState({ 
+    email: "", 
+    password: "", 
+    role: "staff",
+    position: "",
+    department: "Rooms Division"
+  });
   const [loading, setLoading] = useState(false);
 
   const fetchUsers = async () => {
@@ -32,22 +38,25 @@ const UserManagement = () => {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = showLoading("Provisioning staff credentials...");
+    const toastId = showLoading("Provisioning executive credentials...");
 
     try {
       const { error } = await supabase.from('staff').insert([{
-        name: formData.email.split('@')[0],
+        name: formData.email.split('@')[0].replace('.', ' '),
+        email: formData.email,
         role: formData.role,
+        position: formData.position,
+        department: formData.department,
         status: 'Active',
-        salary: '0',
-        net: '0'
+        salary: 0,
+        net: 0
       }]);
 
       if (error) throw error;
 
       dismissToast(toastId);
       showSuccess(`Executive account for ${formData.email} provisioned.`);
-      setFormData({ email: "", password: "", role: "staff" });
+      setFormData({ email: "", password: "", role: "staff", position: "", department: "Rooms Division" });
       fetchUsers();
     } catch (err: any) {
       dismissToast(toastId);
@@ -71,9 +80,6 @@ const UserManagement = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">System Administration</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="h-10 object-contain" />
-          </div>
         </header>
 
         <div className="p-8 space-y-8">
@@ -85,7 +91,7 @@ const UserManagement = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <form onSubmit={handleCreateUser} className="space-y-6">
+                <form onSubmit={handleCreateUser} className="space-y-5">
                   <div className="space-y-2">
                     <Label className="font-bold text-slate-700">Corporate Email</Label>
                     <div className="relative">
@@ -101,34 +107,50 @@ const UserManagement = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-bold text-slate-700">Initial Access Key</Label>
+                    <Label className="font-bold text-slate-700">Job Position</Label>
                     <div className="relative">
-                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                       <Input 
-                        type="password" 
-                        placeholder="••••••••" 
+                        placeholder="e.g. Front Desk Manager" 
                         className="pl-12 h-12 rounded-xl bg-slate-50 border-none"
-                        value={formData.password}
-                        onChange={e => setFormData({...formData, password: e.target.value})}
+                        value={formData.position}
+                        onChange={e => setFormData({...formData, position: e.target.value})}
                         required 
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="font-bold text-slate-700">System Role</Label>
-                    <Select onValueChange={val => setFormData({...formData, role: val})} value={formData.role}>
-                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none">
-                        <SelectValue placeholder="Select Role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="director">Director</SelectItem>
-                        <SelectItem value="gm">General Manager</SelectItem>
-                        <SelectItem value="hr">HR Manager</SelectItem>
-                        <SelectItem value="accountant">Accountant</SelectItem>
-                        <SelectItem value="chef">Executive Chef</SelectItem>
-                        <SelectItem value="staff">General Staff</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="font-bold text-slate-700">Department</Label>
+                      <Select onValueChange={val => setFormData({...formData, department: val})} value={formData.department}>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Management">Management</SelectItem>
+                          <SelectItem value="Rooms Division">Rooms Division</SelectItem>
+                          <SelectItem value="Food & Beverage">Food & Beverage</SelectItem>
+                          <SelectItem value="Finance">Finance</SelectItem>
+                          <SelectItem value="Human Resources">Human Resources</SelectItem>
+                          <SelectItem value="Engineering">Engineering</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="font-bold text-slate-700">System Role</Label>
+                      <Select onValueChange={val => setFormData({...formData, role: val})} value={formData.role}>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="director">Director</SelectItem>
+                          <SelectItem value="gm">GM</SelectItem>
+                          <SelectItem value="hr">HR</SelectItem>
+                          <SelectItem value="accountant">Accountant</SelectItem>
+                          <SelectItem value="staff">Staff</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <Button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 font-black h-14 rounded-2xl shadow-xl shadow-blue-900/20 transition-all active:scale-95" disabled={loading}>
                     PROVISION ACCOUNT
@@ -147,7 +169,7 @@ const UserManagement = () => {
                   <TableHeader className="bg-slate-50/50">
                     <TableRow>
                       <TableHead className="px-8 font-bold">User Identity</TableHead>
-                      <TableHead className="font-bold">Access Level</TableHead>
+                      <TableHead className="font-bold">Position & Dept</TableHead>
                       <TableHead className="font-bold">Status</TableHead>
                       <TableHead className="text-right px-8 font-bold">Actions</TableHead>
                     </TableRow>
@@ -160,11 +182,17 @@ const UserManagement = () => {
                             <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-blue-600 font-black">
                               {user.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="font-bold text-slate-900">{user.name}</span>
+                            <div>
+                              <p className="font-bold text-slate-900">{user.name}</p>
+                              <p className="text-[10px] text-slate-400 font-bold uppercase">{user.role}</p>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="capitalize font-bold border-blue-200 text-blue-700 bg-blue-50">{user.role}</Badge>
+                          <div className="space-y-1">
+                            <p className="text-sm font-bold text-slate-700">{user.position}</p>
+                            <Badge variant="outline" className="text-[9px] font-black uppercase border-blue-200 text-blue-600 bg-blue-50">{user.department}</Badge>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
