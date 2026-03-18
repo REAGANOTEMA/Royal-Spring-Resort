@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { Sparkles, CheckCircle2, Clock, AlertCircle, Search, Filter, User } from 'lucide-react';
+import { Sparkles, CheckCircle2, Clock, AlertCircle, Search, Filter, User, LayoutGrid, List } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 const Housekeeping = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const fetchTasks = async () => {
     const { data, error } = await supabase
@@ -72,7 +73,24 @@ const Housekeeping = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Room Readiness Control</p>
             </div>
           </div>
-          <img src="/logo.png" alt="Logo" className="h-10 object-contain" />
+          <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+            <Button 
+              variant={viewMode === 'grid' ? 'default' : 'ghost'} 
+              size="sm" 
+              className="rounded-lg"
+              onClick={() => setViewMode('grid')}
+            >
+              <LayoutGrid size={18} />
+            </Button>
+            <Button 
+              variant={viewMode === 'list' ? 'default' : 'ghost'} 
+              size="sm" 
+              className="rounded-lg"
+              onClick={() => setViewMode('list')}
+            >
+              <List size={18} />
+            </Button>
+          </div>
         </header>
 
         <div className="p-8 space-y-8">
@@ -106,64 +124,98 @@ const Housekeeping = () => {
             </Card>
           </div>
 
-          <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
-            <CardHeader className="border-b px-8 py-6 flex flex-row items-center justify-between">
-              <CardTitle className="text-xl font-black">Cleaning Schedule</CardTitle>
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                <Input className="pl-9 h-10 bg-slate-50 border-none rounded-xl" placeholder="Search rooms..." />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader className="bg-slate-50/50">
-                  <TableRow>
-                    <TableHead className="px-8 font-bold">Room</TableHead>
-                    <TableHead className="font-bold">Type</TableHead>
-                    <TableHead className="font-bold">Assigned Staff</TableHead>
-                    <TableHead className="font-bold">Status</TableHead>
-                    <TableHead className="text-right px-8 font-bold">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tasks.map((task) => (
-                    <TableRow key={task.id} className="hover:bg-slate-50/50 transition-colors">
-                      <TableCell className="px-8 font-black text-slate-900">Room {task.room_id}</TableCell>
-                      <TableCell><Badge variant="outline" className="font-bold">{task.rooms?.type}</Badge></TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <User size={14} className="text-slate-400" />
-                          <span className="text-sm font-bold text-slate-600">{task.staff_name || 'Unassigned'}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={cn(
-                          "px-3 py-1 font-black uppercase text-[10px] tracking-widest rounded-lg",
-                          task.status === 'Pending' ? "bg-amber-100 text-amber-700" :
-                          task.status === 'In Progress' ? "bg-blue-100 text-blue-700" :
-                          task.status === 'Completed' ? "bg-emerald-100 text-emerald-700" :
-                          "bg-slate-100 text-slate-700"
-                        )}>{task.status}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right px-8">
-                        <div className="flex justify-end gap-2">
-                          {task.status === 'Pending' && (
-                            <Button size="sm" className="bg-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'In Progress')} disabled={loading}>Start</Button>
-                          )}
-                          {task.status === 'In Progress' && (
-                            <Button size="sm" className="bg-emerald-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Completed')} disabled={loading}>Finish</Button>
-                          )}
-                          {task.status === 'Completed' && (
-                            <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Inspected')} disabled={loading}>Inspect</Button>
-                          )}
-                        </div>
-                      </TableCell>
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {tasks.map((task) => (
+                <Card 
+                  key={task.id} 
+                  className={cn(
+                    "border-none shadow-lg rounded-3xl overflow-hidden transition-all hover:scale-105 cursor-pointer",
+                    task.status === 'Pending' ? "bg-amber-50" :
+                    task.status === 'In Progress' ? "bg-blue-50" :
+                    task.status === 'Completed' ? "bg-emerald-50" :
+                    "bg-white"
+                  )}
+                  onClick={() => {
+                    if (task.status === 'Pending') handleStatusUpdate(task.id, task.room_id, 'In Progress');
+                    else if (task.status === 'In Progress') handleStatusUpdate(task.id, task.room_id, 'Completed');
+                    else if (task.status === 'Completed') handleStatusUpdate(task.id, task.room_id, 'Inspected');
+                  }}
+                >
+                  <CardContent className="p-6 text-center space-y-2">
+                    <h4 className="text-2xl font-black text-slate-900">Room {task.room_id}</h4>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{task.rooms?.type}</p>
+                    <Badge className={cn(
+                      "px-2 py-0.5 font-black uppercase text-[8px] tracking-widest rounded-lg",
+                      task.status === 'Pending' ? "bg-amber-500 text-white" :
+                      task.status === 'In Progress' ? "bg-blue-500 text-white" :
+                      task.status === 'Completed' ? "bg-emerald-500 text-white" :
+                      "bg-slate-500 text-white"
+                    )}>{task.status}</Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
+              <CardHeader className="border-b px-8 py-6 flex flex-row items-center justify-between">
+                <CardTitle className="text-xl font-black">Cleaning Schedule</CardTitle>
+                <div className="relative w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <Input className="pl-9 h-10 bg-slate-50 border-none rounded-xl" placeholder="Search rooms..." />
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader className="bg-slate-50/50">
+                    <TableRow>
+                      <TableHead className="px-8 font-bold">Room</TableHead>
+                      <TableHead className="font-bold">Type</TableHead>
+                      <TableHead className="font-bold">Assigned Staff</TableHead>
+                      <TableHead className="font-bold">Status</TableHead>
+                      <TableHead className="text-right px-8 font-bold">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {tasks.map((task) => (
+                      <TableRow key={task.id} className="hover:bg-slate-50/50 transition-colors">
+                        <TableCell className="px-8 font-black text-slate-900">Room {task.room_id}</TableCell>
+                        <TableCell><Badge variant="outline" className="font-bold">{task.rooms?.type}</Badge></TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User size={14} className="text-slate-400" />
+                            <span className="text-sm font-bold text-slate-600">{task.staff_name || 'Unassigned'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={cn(
+                            "px-3 py-1 font-black uppercase text-[10px] tracking-widest rounded-lg",
+                            task.status === 'Pending' ? "bg-amber-100 text-amber-700" :
+                            task.status === 'In Progress' ? "bg-blue-100 text-blue-700" :
+                            task.status === 'Completed' ? "bg-emerald-100 text-emerald-700" :
+                            "bg-slate-100 text-slate-700"
+                          )}>{task.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right px-8">
+                          <div className="flex justify-end gap-2">
+                            {task.status === 'Pending' && (
+                              <Button size="sm" className="bg-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'In Progress')} disabled={loading}>Start</Button>
+                            )}
+                            {task.status === 'In Progress' && (
+                              <Button size="sm" className="bg-emerald-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Completed')} disabled={loading}>Finish</Button>
+                            )}
+                            {task.status === 'Completed' && (
+                              <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Inspected')} disabled={loading}>Inspect</Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
         </div>
         <Footer />
       </main>

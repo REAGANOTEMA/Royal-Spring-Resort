@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import VoiceConcierge from "@/components/VoiceConcierge";
+import VoiceConcierge, { useRoyalVoice } from "@/components/VoiceConcierge";
 import { 
   LayoutDashboard, 
   BedDouble, 
@@ -17,7 +17,8 @@ import {
   Receipt,
   ArrowUpRight,
   Activity,
-  Clock
+  Clock,
+  Mic
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ const Dashboard = () => {
     occupancyRate: 0
   });
   const [recentLogs, setRecentLogs] = useState<any[]>([]);
+  const { speak } = useRoyalVoice();
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || 'Executive';
@@ -82,6 +84,11 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const handleBriefing = () => {
+    const briefingText = `Good day, ${userName}. Here is your executive briefing. Our current occupancy rate is ${stats.occupancyRate} percent, with ${stats.occupiedRooms} rooms occupied. Daily revenue has reached ${stats.dailyRevenue.toLocaleString()} shillings. There are ${stats.pendingIncidents} pending incidents requiring your attention. All ${stats.totalStaff} staff members are currently on duty.`;
+    speak(briefingText);
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
@@ -97,6 +104,12 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <Button 
+              onClick={handleBriefing}
+              className="bg-slate-900 hover:bg-blue-700 text-white font-black rounded-xl h-12 px-6 flex items-center gap-2 shadow-xl"
+            >
+              <Mic size={18} className="text-blue-400" /> DIRECTOR'S BRIEFING
+            </Button>
             <div className="text-right hidden md:block">
               <p className="text-sm font-bold text-slate-900">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
               <div className="flex items-center justify-end gap-1.5">
