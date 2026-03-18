@@ -15,7 +15,8 @@ import {
   Camera,
   Palmtree,
   Coffee,
-  Pizza
+  Pizza,
+  UtensilsCrossed
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,29 +27,29 @@ import { cn } from '@/lib/utils';
 
 const heroSlides = [
   {
-    url: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=2000',
-    title: 'Royal Spring Hotel Iganga',
-    subtitle: 'A sanctuary of luxury nestled within lush tropical greenery.',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=2000',
-    title: 'Sparkling Infinity Pool',
-    subtitle: 'Refresh your senses in our crystal-clear waters surrounded by nature.',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?auto=format&fit=crop&q=80&w=2000',
-    title: 'Aromatic Ugandan Delicacies',
-    subtitle: 'Savor the authentic flavors of the pearl of Africa, prepared to perfection.',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=2000',
-    title: 'Exquisite Snacks & Bites',
-    subtitle: 'Delight in our selection of gourmet snacks and refreshing treats.',
-  },
-  {
     url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2000',
-    title: 'Serene Garden Relaxation',
-    subtitle: 'Find peace in our meticulously manicured vegetation compounds.',
+    title: 'Royal Spring Hotel Iganga',
+    subtitle: 'Iconic red-roofed luxury surrounded by majestic palm trees and vibrant flowers.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&q=80&w=2000',
+    title: 'Authentic Fried Fish',
+    subtitle: 'Savor our signature crispy fried fish, a true Ugandan delicacy.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=2000',
+    title: 'Roasted Meat & Salads',
+    subtitle: 'Perfectly seasoned roasted meats served with fresh, vibrant garden salads.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=2000',
+    title: 'Gourmet Burgers & Snacks',
+    subtitle: 'Delight in our juicy hamburgers and a wide variety of crispy snacks.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1598502136455-c959d7715b21?auto=format&fit=crop&q=80&w=2000',
+    title: 'Serene Garden Seating',
+    subtitle: 'Relax in our flat, lush compounds with plenty of comfortable seating under the trees.',
   },
 ];
 
