@@ -17,7 +17,8 @@ import {
   Coffee,
   Pizza,
   UtensilsCrossed,
-  CheckCircle2
+  CheckCircle2,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -54,35 +55,13 @@ const heroSlides = [
   },
 ];
 
-const experienceCards = [
-  {
-    title: "Lush Vegetation",
-    desc: "Explore our serene compounds surrounded by nature's finest greenery and tropical flora.",
-    image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800",
-    icon: Leaf,
-    color: "bg-emerald-600"
-  },
-  {
-    title: "Cinematic Sunsets",
-    desc: "Witness breathtaking golden hours from our panoramic terraces overlooking the valley.",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800",
-    icon: Camera,
-    color: "bg-amber-600"
-  },
-  {
-    title: "Tropical Paradise",
-    desc: "A sanctuary where luxury meets the wild, offering a unique blend of comfort and adventure.",
-    image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800",
-    icon: Palmtree,
-    color: "bg-blue-600"
-  }
-];
-
-const diningItems = [
-  { name: "Signature Fried Fish", desc: "Freshly caught and crisped to perfection with local spices.", image: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&q=80&w=600" },
-  { name: "Royal Roasted Meat", desc: "Tender, flame-grilled cuts served with traditional sides.", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=600" },
-  { name: "Gourmet Burgers", desc: "Juicy beef patties with fresh garden toppings and secret sauce.", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=600" },
-  { name: "Crispy Fried Chicken", desc: "Golden, crunchy, and bursting with flavor in every bite.", image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=600" },
+const galleryImages = [
+  { url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800', title: 'Red-Roofed Architecture' },
+  { url: 'https://images.unsplash.com/photo-1598502136455-c959d7715b21?auto=format&fit=crop&q=80&w=800', title: 'Garden Seating' },
+  { url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', title: 'Lush Compounds' },
+  { url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800', title: 'Luxury Interiors' },
+  { url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=800', title: 'Infinity Pool' },
+  { url: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800', title: 'Tropical Flora' },
 ];
 
 const Index = () => {
@@ -104,11 +83,10 @@ const Index = () => {
           <span className="text-xl font-bold tracking-tight text-slate-900 hidden sm:inline">Royal Springs Resort</span>
         </div>
 
-        {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
           <a href="#experience" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Experience</a>
           <a href="#dining" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Dining</a>
-          <a href="#amenities" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Amenities</a>
+          <a href="#gallery" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Gallery</a>
           <Link to="/login">
             <Button variant="outline" className="border-blue-700 text-blue-700 hover:bg-blue-50 font-bold">Staff Portal</Button>
           </Link>
@@ -117,7 +95,6 @@ const Index = () => {
           </Link>
         </div>
 
-        {/* Mobile Nav */}
         <div className="lg:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -129,7 +106,7 @@ const Index = () => {
               <div className="flex flex-col gap-6 mt-12">
                 <a href="#experience" className="text-lg font-bold text-slate-900">Experience</a>
                 <a href="#dining" className="text-lg font-bold text-slate-900">Dining</a>
-                <a href="#amenities" className="text-lg font-bold text-slate-900">Amenities</a>
+                <a href="#gallery" className="text-lg font-bold text-slate-900">Gallery</a>
                 <Link to="/login" className="w-full">
                   <Button variant="outline" className="w-full border-blue-700 text-blue-700 font-bold h-12">Staff Portal</Button>
                 </Link>
@@ -207,7 +184,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Slide Indicators */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
           {heroSlides.map((_, i) => (
             <button
@@ -222,102 +198,28 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section id="experience" className="py-24 bg-slate-50">
+      {/* Gallery Section */}
+      <section id="gallery" className="py-24 bg-slate-950 text-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">The Royal Experience</h2>
-            <p className="text-slate-500 text-lg max-w-2xl mx-auto">Immerse yourself in the beauty of our resort through our cinematic showcase.</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Resort Gallery</h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">A visual journey through our iconic red-roofed architecture and lush garden landscapes.</p>
           </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {experienceCards.map((card, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2 }}
-                viewport={{ once: true }}
-                className="relative group rounded-[2.5rem] overflow-hidden shadow-2xl aspect-[4/5]"
-              >
-                <img 
-                  src={card.image} 
-                  alt={card.title} 
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-10">
-                  <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg", card.color)}>
-                    <card.icon className="text-white" size={28} />
-                  </div>
-                  <h3 className="text-3xl font-bold text-white mb-3">{card.title}</h3>
-                  <p className="text-slate-300 text-lg leading-relaxed">{card.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Dining Section */}
-      <section id="dining" className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Royal Dining & Delicacies</h2>
-              <p className="text-slate-500 text-lg">From our signature fried fish to gourmet burgers, experience the authentic taste of Uganda in our serene garden setting.</p>
-            </div>
-            <Link to="/book">
-              <Button className="bg-blue-700 hover:bg-blue-800 font-bold h-14 px-8 rounded-2xl">View Full Menu</Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {diningItems.map((item, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {galleryImages.map((img, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="group"
+                className="relative group h-80 rounded-[2rem] overflow-hidden shadow-2xl"
               >
-                <div className="relative h-64 rounded-[2rem] overflow-hidden mb-6 shadow-xl">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+                <img src={img.url} alt={img.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <p className="text-xl font-bold tracking-widest uppercase">{img.title}</p>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.name}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Amenities Section */}
-      <section id="amenities" className="py-24 bg-slate-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">World-Class Amenities</h2>
-            <p className="text-slate-500 text-lg max-w-2xl mx-auto">Every detail at Royal Springs is crafted to provide you with an unforgettable experience.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {[
-              { icon: Waves, title: 'Infinity Pool', desc: 'Dive into crystal clear waters with breathtaking views of our lush compounds.' },
-              { icon: Wifi, title: 'Ultra-Fast WiFi', desc: 'Stay connected with high-speed fiber optic internet throughout the resort.' },
-              { icon: ShieldCheck, title: 'Elite Security', desc: 'Your safety is guaranteed with our 24/7 professional security detail.' },
-              { icon: Utensils, title: 'Fine Dining', desc: 'Experience culinary excellence with our diverse menu of local and international dishes.' },
-              { icon: BedDouble, title: 'Luxury Suites', desc: 'Rest in meticulously designed rooms that blend modern comfort with royal elegance.' },
-              { icon: Coffee, title: 'Royal Lounge', desc: 'Relax in our exclusive lounge area with premium refreshments and a serene atmosphere.' },
-            ].map((feature, i) => (
-              <Card key={i} className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden rounded-3xl">
-                <CardContent className="p-10 flex flex-col items-center text-center">
-                  <div className="w-20 h-20 rounded-3xl bg-blue-50 text-blue-700 flex items-center justify-center mb-8 group-hover:bg-blue-700 group-hover:text-white transition-all duration-500 transform group-hover:rotate-6">
-                    <feature.icon size={40} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{feature.title}</h3>
-                  <p className="text-slate-600 leading-relaxed text-lg">{feature.desc}</p>
-                </CardContent>
-              </Card>
             ))}
           </div>
         </div>
