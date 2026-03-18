@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BedDouble, CalendarCheck, Users, Package, BarChart3, UserCog, AlertCircle, LogOut, Receipt, Briefcase, FileBarChart, MessageSquare, ShieldAlert, ImageIcon, Menu, ShieldCheck, UtensilsCrossed, Sparkles, Wrench } from 'lucide-react';
+import { LayoutDashboard, BedDouble, CalendarCheck, Users, Package, BarChart3, UserCog, AlertCircle, LogOut, Receipt, Briefcase, FileBarChart, MessageSquare, ShieldAlert, ImageIcon, Menu, ShieldCheck, UtensilsCrossed, Sparkles, Wrench, Banknote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ const SidebarContent = ({ role, userName, location, onClose }: any) => {
     { icon: Users, label: 'GUESTS', path: '/guests', roles: ['director', 'gm', 'staff'] },
     { icon: Package, label: 'INVENTORY', path: '/inventory', roles: ['director', 'gm', 'accountant'] },
     { icon: BarChart3, label: 'FINANCE', path: '/finance', roles: ['director', 'gm', 'accountant'] },
+    { icon: Banknote, label: 'PAYROLL', path: '/payroll', roles: ['director', 'gm', 'hr', 'accountant'] },
     { icon: FileBarChart, label: 'REPORTS', path: '/reports', roles: ['director', 'gm'] },
     { icon: UserCog, label: 'HR & STAFF', path: '/hr', roles: ['director', 'gm', 'hr'] },
     { icon: ShieldCheck, label: 'USERS', path: '/users', roles: ['director'] },
@@ -101,7 +102,7 @@ const Sidebar = () => {
       <div className="lg:hidden fixed top-4 left-4 z-[60]">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild><Button variant="outline" size="icon" className="bg-slate-950 border-slate-800 text-white"><Menu size={24} /></Button></SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72 border-r border-slate-800"><SidebarContent role={role} userName={userName} location={location} onClose={() => setIsOpen(false)} /></SidebarContent>
+          <SheetContent side="left" className="p-0 w-72 border-r border-slate-800"><SidebarContent role={role} userName={userName} location={location} onClose={() => setIsOpen(false)} /></SheetContent>
         </Sheet>
       </div>
     </>
