@@ -16,7 +16,8 @@ import {
   Palmtree,
   Coffee,
   Pizza,
-  UtensilsCrossed
+  UtensilsCrossed,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -77,6 +78,13 @@ const experienceCards = [
   }
 ];
 
+const diningItems = [
+  { name: "Signature Fried Fish", desc: "Freshly caught and crisped to perfection with local spices.", image: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&q=80&w=600" },
+  { name: "Royal Roasted Meat", desc: "Tender, flame-grilled cuts served with traditional sides.", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=600" },
+  { name: "Gourmet Burgers", desc: "Juicy beef patties with fresh garden toppings and secret sauce.", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=600" },
+  { name: "Crispy Fried Chicken", desc: "Golden, crunchy, and bursting with flavor in every bite.", image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=600" },
+];
+
 const Index = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -99,6 +107,7 @@ const Index = () => {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
           <a href="#experience" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Experience</a>
+          <a href="#dining" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Dining</a>
           <a href="#amenities" className="text-sm font-semibold text-slate-600 hover:text-blue-700 transition-colors">Amenities</a>
           <Link to="/login">
             <Button variant="outline" className="border-blue-700 text-blue-700 hover:bg-blue-50 font-bold">Staff Portal</Button>
@@ -119,6 +128,7 @@ const Index = () => {
             <SheetContent side="right" className="w-full sm:w-80 bg-white">
               <div className="flex flex-col gap-6 mt-12">
                 <a href="#experience" className="text-lg font-bold text-slate-900">Experience</a>
+                <a href="#dining" className="text-lg font-bold text-slate-900">Dining</a>
                 <a href="#amenities" className="text-lg font-bold text-slate-900">Amenities</a>
                 <Link to="/login" className="w-full">
                   <Button variant="outline" className="w-full border-blue-700 text-blue-700 font-bold h-12">Staff Portal</Button>
@@ -248,31 +258,68 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Amenities Section */}
-      <section id="amenities" className="py-24 container mx-auto px-4">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">World-Class Amenities</h2>
-          <p className="text-slate-500 text-lg max-w-2xl mx-auto">Every detail at Royal Springs is crafted to provide you with an unforgettable experience.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {[
-            { icon: Waves, title: 'Infinity Pool', desc: 'Dive into crystal clear waters with breathtaking views of our lush compounds.' },
-            { icon: Wifi, title: 'Ultra-Fast WiFi', desc: 'Stay connected with high-speed fiber optic internet throughout the resort.' },
-            { icon: ShieldCheck, title: 'Elite Security', desc: 'Your safety is guaranteed with our 24/7 professional security detail.' },
-            { icon: Utensils, title: 'Fine Dining', desc: 'Experience culinary excellence with our diverse menu of local and international dishes.' },
-            { icon: BedDouble, title: 'Luxury Suites', desc: 'Rest in meticulously designed rooms that blend modern comfort with royal elegance.' },
-            { icon: Coffee, title: 'Royal Lounge', desc: 'Relax in our exclusive lounge area with premium refreshments and a serene atmosphere.' },
-          ].map((feature, i) => (
-            <Card key={i} className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden rounded-3xl">
-              <CardContent className="p-10 flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-3xl bg-blue-50 text-blue-700 flex items-center justify-center mb-8 group-hover:bg-blue-700 group-hover:text-white transition-all duration-500 transform group-hover:rotate-6">
-                  <feature.icon size={40} />
+      {/* Dining Section */}
+      <section id="dining" className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Royal Dining & Delicacies</h2>
+              <p className="text-slate-500 text-lg">From our signature fried fish to gourmet burgers, experience the authentic taste of Uganda in our serene garden setting.</p>
+            </div>
+            <Link to="/book">
+              <Button className="bg-blue-700 hover:bg-blue-800 font-bold h-14 px-8 rounded-2xl">View Full Menu</Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {diningItems.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="group"
+              >
+                <div className="relative h-64 rounded-[2rem] overflow-hidden mb-6 shadow-xl">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-lg">{feature.desc}</p>
-              </CardContent>
-            </Card>
-          ))}
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.name}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Amenities Section */}
+      <section id="amenities" className="py-24 bg-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">World-Class Amenities</h2>
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto">Every detail at Royal Springs is crafted to provide you with an unforgettable experience.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {[
+              { icon: Waves, title: 'Infinity Pool', desc: 'Dive into crystal clear waters with breathtaking views of our lush compounds.' },
+              { icon: Wifi, title: 'Ultra-Fast WiFi', desc: 'Stay connected with high-speed fiber optic internet throughout the resort.' },
+              { icon: ShieldCheck, title: 'Elite Security', desc: 'Your safety is guaranteed with our 24/7 professional security detail.' },
+              { icon: Utensils, title: 'Fine Dining', desc: 'Experience culinary excellence with our diverse menu of local and international dishes.' },
+              { icon: BedDouble, title: 'Luxury Suites', desc: 'Rest in meticulously designed rooms that blend modern comfort with royal elegance.' },
+              { icon: Coffee, title: 'Royal Lounge', desc: 'Relax in our exclusive lounge area with premium refreshments and a serene atmosphere.' },
+            ].map((feature, i) => (
+              <Card key={i} className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden rounded-3xl">
+                <CardContent className="p-10 flex flex-col items-center text-center">
+                  <div className="w-20 h-20 rounded-3xl bg-blue-50 text-blue-700 flex items-center justify-center mb-8 group-hover:bg-blue-700 group-hover:text-white transition-all duration-500 transform group-hover:rotate-6">
+                    <feature.icon size={40} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{feature.title}</h3>
+                  <p className="text-slate-600 leading-relaxed text-lg">{feature.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
