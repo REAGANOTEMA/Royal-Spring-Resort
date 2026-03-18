@@ -5,11 +5,6 @@ import { createRoot } from "react-dom/client";
 import App from "./App"; // Main App component
 import "./globals.css"; // Tailwind global styles
 
-// Ensure environment variables exist using Vite's import.meta.env
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  throw new Error("Supabase environment variables are missing! Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file.");
-}
-
 // Root container
 const container = document.getElementById("root");
 if (!container) throw new Error("Root element with id 'root' not found");
