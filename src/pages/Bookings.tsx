@@ -28,16 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { showSuccess, showError } from "@/utils/toast";
 import { cn } from "@/lib/utils";
-
-interface Booking {
-  id: string;
-  guest: string;
-  room: string;
-  status: string;
-  amount: string;
-  check_in?: string;
-  check_out?: string;
-}
+import { Booking } from "../types/index";
 
 const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -166,7 +157,7 @@ const Bookings: React.FC = () => {
         <Footer />
       </main>
 
-      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} setBookings={setBookings} />
+      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSuccess={fetchBookings} />
       <DeleteDialog isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} />
     </div>
   );

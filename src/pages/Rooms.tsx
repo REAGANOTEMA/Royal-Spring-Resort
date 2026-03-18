@@ -15,27 +15,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
-
-interface RoomType {
-  id: string;
-  type: string;
-  price: number;
-  status: string;
-  floor: string;
-  image: string;
-}
+import { Room } from '../types/index';
 
 const Rooms: React.FC = () => {
-  const [rooms, setRooms] = useState<RoomType[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [newRoom, setNewRoom] = useState<Partial<RoomType>>({ id: '', type: 'Standard', price: 0, floor: '1st Floor', image: '' });
+  const [newRoom, setNewRoom] = useState<Partial<Room>>({ id: '', type: 'Standard', price: 0, floor: '1st Floor', image: '' });
 
   const fetchRooms = async () => {
     const { data, error } = await supabase.from('rooms').select('*').order('id');
     if (error) showError(error.message);
-    else setRooms(data as RoomType[]);
+    else setRooms(data as Room[]);
   };
 
   useEffect(() => {

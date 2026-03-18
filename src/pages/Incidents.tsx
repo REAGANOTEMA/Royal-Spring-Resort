@@ -12,16 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
-
-interface Incident {
-  id: string;
-  type: string;
-  description: string;
-  reported_by: string;
-  date: string;
-  priority: string;
-  status: string;
-}
+import { Incident } from '../types/index';
 
 const Incidents = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
