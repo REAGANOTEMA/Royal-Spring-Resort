@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import { FileText, Upload, FileCheck, FileWarning, Search, Trash2, Eye, Download, ShieldCheck } from "lucide-react";
+import { FileText, Upload, FileCheck, FileWarning, Search, Trash2, Eye, Download, ShieldCheck, BookOpen, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,54 +54,59 @@ const Help: React.FC = () => {
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="text-blue-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-800">Document Management Center</h2>
+        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-xl text-white">
+              <BookOpen size={24} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-slate-900">Knowledge & Documents</h2>
+              <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">System Repository</p>
+            </div>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 font-bold flex items-center" onClick={handleUpload}>
-            <Upload size={18} className="mr-2" /> Upload Paper Document
+          <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-black rounded-xl shadow-lg shadow-blue-900/20" onClick={handleUpload}>
+            <Upload size={18} className="mr-2" /> UPLOAD DOCUMENT
           </Button>
         </header>
 
         <div className="p-8 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-none shadow-sm bg-white">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl"><FileCheck size={32} /></div>
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="p-5 bg-blue-50 text-blue-600 rounded-2xl"><FileCheck size={32} /></div>
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Verified Docs</p>
-                  <p className="text-2xl font-black">{docs.filter(d => d.status === 'Verified').length}</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Verified Docs</p>
+                  <p className="text-3xl font-black text-slate-900">{docs.filter(d => d.status === 'Verified').length}</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-sm bg-white">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl"><Upload size={32} /></div>
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="p-5 bg-amber-50 text-amber-600 rounded-2xl"><Info size={32} /></div>
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Review</p>
-                  <p className="text-2xl font-black">{docs.filter(d => d.status === 'Pending').length}</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Review</p>
+                  <p className="text-3xl font-black text-slate-900">{docs.filter(d => d.status === 'Pending').length}</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-sm bg-white">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 bg-red-50 text-red-600 rounded-2xl"><FileWarning size={32} /></div>
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="p-5 bg-red-50 text-red-600 rounded-2xl"><FileWarning size={32} /></div>
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Alerts</p>
-                  <p className="text-2xl font-black">{docs.filter(d => d.status === 'Alert').length}</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">System Alerts</p>
+                  <p className="text-3xl font-black text-slate-900">{docs.filter(d => d.status === 'Alert').length}</p>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <Card className="border-none shadow-xl overflow-hidden bg-white rounded-2xl">
+          <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
             <CardHeader className="border-b px-8 py-6">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-xl font-bold">System Files & Uploads</CardTitle>
+                <CardTitle className="text-xl font-black">System Files & Uploads</CardTitle>
                 <div className="relative w-80">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <Input className="pl-10 h-11 bg-slate-50 border-none" placeholder="Search documents..." />
+                  <Input className="pl-10 h-11 bg-slate-50 border-none rounded-xl" placeholder="Search documents..." />
                 </div>
               </div>
             </CardHeader>
@@ -112,7 +117,6 @@ const Help: React.FC = () => {
                     <TableHead className="px-8 font-bold">Document Name</TableHead>
                     <TableHead className="font-bold">Category</TableHead>
                     <TableHead className="font-bold">Uploaded By</TableHead>
-                    <TableHead className="font-bold">Date</TableHead>
                     <TableHead className="font-bold">Status</TableHead>
                     <TableHead className="text-right px-8 font-bold">Actions</TableHead>
                   </TableRow>
@@ -122,17 +126,16 @@ const Help: React.FC = () => {
                     <TableRow key={doc.id} className="hover:bg-slate-50/50 transition-colors">
                       <TableCell className="px-8">
                         <div className="flex items-center gap-3">
-                          <FileText size={18} className="text-blue-600" />
+                          <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><FileText size={18} /></div>
                           <span className="font-bold text-slate-900">{doc.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell><Badge variant="secondary" className="font-bold">{doc.category}</Badge></TableCell>
-                      <TableCell className="text-sm text-slate-600">{doc.uploaded_by}</TableCell>
-                      <TableCell className="text-sm text-slate-500">{doc.date}</TableCell>
+                      <TableCell><Badge variant="secondary" className="font-bold bg-slate-100 text-slate-600">{doc.category}</Badge></TableCell>
+                      <TableCell className="text-sm font-bold text-slate-500">{doc.uploaded_by}</TableCell>
                       <TableCell>
                         <Badge className={cn(
-                          "px-3 py-1 font-bold rounded-full",
-                          doc.status === "Verified" ? "bg-green-100 text-green-700" :
+                          "px-4 py-1 font-black rounded-full uppercase text-[10px] tracking-widest",
+                          doc.status === "Verified" ? "bg-emerald-100 text-emerald-700" :
                           doc.status === "Pending" ? "bg-amber-100 text-amber-700" :
                           "bg-red-100 text-red-700"
                         )}>
@@ -141,8 +144,8 @@ const Help: React.FC = () => {
                       </TableCell>
                       <TableCell className="text-right px-8">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" className="text-blue-600"><Eye size={16} /></Button>
-                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDelete(doc.id)}><Trash2 size={16} /></Button>
+                          <Button variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50 rounded-xl"><Eye size={18} /></Button>
+                          <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50 rounded-xl" onClick={() => handleDelete(doc.id)}><Trash2 size={18} /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
