@@ -42,6 +42,14 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check for Demo Mode first
+    const isDemo = localStorage.getItem("demoMode") === "true";
+    if (isDemo) {
+      setSession({ user: { email: 'demo@royalsprings.com' } });
+      setLoading(false);
+      return;
+    }
+
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -52,7 +60,6 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
-        // Persist role and name for UI consistency
         const role = session.user.user_metadata?.role || 'staff';
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
         localStorage.setItem("userRole", role);
