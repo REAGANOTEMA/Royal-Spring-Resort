@@ -1,86 +1,71 @@
-/* globals.css */
-
-/* ============================= */
-/* Tailwind Base, Components, Utilities */
-/* ============================= */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ============================= */
-/* Base Layer: Default Styling */
-/* ============================= */
 @layer base {
-  /* Reset default margins/padding */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  /* Body defaults */
-  body {
-    @apply bg-white text-gray-900 font-sans;
-  }
-
-  /* Headings default */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-gray-800;
-  }
-
-  /* Links default */
-  a {
-    @apply text-blue-600 hover:text-blue-800 no-underline;
-  }
-
-  /* Buttons default */
-  button {
-    @apply cursor-pointer;
-  }
-
-  /* Images default */
-  img {
-    @apply max-w-full h-auto;
-  }
-
-  /* Inputs, selects, textareas default */
-  input, select, textarea {
-    @apply border border-gray-300 rounded-md p-2;
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 1.5rem;
   }
 }
 
-/* ============================= */
-/* Print Styles */
-/* ============================= */
+body {
+  @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  background-image: radial-gradient(at 0% 0%, hsla(210,100%,98%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(220,100%,97%,1) 0, transparent 50%);
+}
+
+/* Luxury Typography */
+h1, h2, h3, h4 {
+  @apply tracking-tight font-black;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-blue-400 transition-colors;
+}
+
+/* Animations */
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl;
+}
+
+/* Print Styles for Receipts */
 @media print {
-  .no-print {
-    display: none !important;
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  body { background: white !important; }
+  .receipt-container {
+    width: 100%;
+    padding: 40px;
+    border: 2px solid #eee;
   }
-
-  body {
-    background: white !important;
-    padding: 0 !important;
-  }
-
-  aside, nav, header, footer {
-    display: none !important;
-  }
-
-  main {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .print-invoice {
-    display: block !important;
-    width: 100% !important;
-    padding: 40px !important;
-  }
-}
-
-/* ============================= */
-/* Utility Enhancements */
-/* ============================= */
-html {
-  scroll-behavior: smooth;
 }

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import DeleteDialog from '@/components/DeleteDialog';
 import { Receipt, Search, Printer, Plus, Trash2, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,125 +18,112 @@ import { cn } from '@/lib/utils';
 const Billing = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newInvoice, setNewInvoice] = useState({ guest: '', room: '', amount: '' });
 
   const fetchInvoices = async () => {
-    const { data, error } = await supabase
-      .from('billing')
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (error) showError(error.message);
-    else setInvoices(data || []);
+    const { data, error } = await supabase.from('billing').select('*').order('date', { ascending: false });
+    if (!error) setInvoices(data || []);
   };
 
   useEffect(() => {
     fetchInvoices();
   }, []);
 
-  const handleAddInvoice = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const invoiceToAdd = {
-      guest: newInvoice.guest,
-      room: newInvoice.room,
-      amount: newInvoice.amount,
-      status: 'Pending',
-      date: new Date().toISOString().split('T')[0],
-    };
-
-    const { error } = await supabase.from('billing').insert([invoiceToAdd]);
-    if (error) showError(error.message);
-    else {
-      setIsAddModalOpen(false);
-      showSuccess(`Invoice created for ${newInvoice.guest}.`);
-      setNewInvoice({ guest: '', room: '', amount: '' });
-      fetchInvoices();
-    }
-  };
-
-  const handleMarkAsPaid = async (id: string) => {
-    const { error } = await supabase.from('billing').update({ status: 'Paid' }).eq('id', id);
-    if (error) showError(error.message);
-    else {
-      showSuccess("Invoice marked as Paid.");
-      fetchInvoices();
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedId) return;
-    const { error } = await supabase.from('billing').delete().eq('id', selectedId);
-    if (error) showError(error.message);
-    else {
-      setIsDeleteModalOpen(false);
-      showSuccess("Invoice deleted.");
-      fetchInvoices();
-    }
+  const handlePrint = (invoice: any) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Receipt - ${invoice.guest}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; color: #333; }
+            .header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+            .logo { height: 80px; margin-bottom: 10px; }
+            .details { display: flex; justify-content: space-between; margin-bottom: 40px; }
+            .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+            .table th, .table td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+            .total { text-align: right; font-size: 24px; font-weight: bold; color: #1e3a8a; }
+            .footer { text-align: center; margin-top: 60px; font-size: 12px; color: #999; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <img src="/logo.png" class="logo" />
+            <h1>ROYAL SPRINGS RESORT</h1>
+            <p>Official Payment Receipt</p>
+          </div>
+          <div class="details">
+            <div>
+              <p><strong>GUEST:</strong> ${invoice.guest}</p>
+              <p><strong>ROOM:</strong> ${invoice.room}</p>
+            </div>
+            <div>
+              <p><strong>DATE:</strong> ${invoice.date}</p>
+              <p><strong>INVOICE #:</strong> ${invoice.id.slice(0, 8).toUpperCase()}</p>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>Description</th><th>Status</th><th style="text-align:right">Amount</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Accommodation & Services</td><td>${invoice.status}</td><td style="text-align:right">UGX ${invoice.amount}</td></tr>
+            </tbody>
+          </table>
+          <div class="total">TOTAL: UGX ${invoice.amount}</div>
+          <div class="footer">
+            <p>Thank you for choosing Royal Springs Resort. We hope you enjoyed your stay.</p>
+            <p>Kampala, Uganda | +256 772 514 889 | info@royalspringsresort.com</p>
+          </div>
+          <script>window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-2">
-            <Receipt className="text-blue-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-800">Guest Billing & Invoices</h2>
+        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-xl text-white"><Receipt size={24} /></div>
+            <h2 className="text-xl font-black text-slate-900">Billing & Invoices</h2>
           </div>
-          <Button className="bg-blue-700 hover:bg-blue-800 font-bold" onClick={() => setIsAddModalOpen(true)}>
-            <Plus size={18} className="mr-2" /> Create New Invoice
+          <Button className="bg-blue-700 hover:bg-blue-800 font-black rounded-xl h-12 px-6" onClick={() => setIsAddModalOpen(true)}>
+            <Plus size={18} className="mr-2" /> CREATE INVOICE
           </Button>
         </header>
 
-        <div className="p-8 space-y-8">
-          <Card className="border-none shadow-xl overflow-hidden bg-white rounded-2xl">
-            <CardHeader className="border-b px-8 py-6">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-xl font-bold">Invoice History</CardTitle>
-                <div className="relative w-80">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <Input className="pl-10 h-11 bg-slate-50 border-none" placeholder="Search guest or room..." />
-                </div>
-              </div>
-            </CardHeader>
+        <div className="p-8">
+          <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2rem]">
             <CardContent className="p-0">
               <Table>
                 <TableHeader className="bg-slate-50/50">
                   <TableRow>
-                    <TableHead className="font-bold px-8">Date</TableHead>
+                    <TableHead className="px-8 font-bold">Date</TableHead>
                     <TableHead className="font-bold">Guest</TableHead>
                     <TableHead className="font-bold">Room</TableHead>
                     <TableHead className="font-bold">Status</TableHead>
-                    <TableHead className="font-bold text-right">Amount (UGX)</TableHead>
-                    <TableHead className="font-bold text-right px-8">Actions</TableHead>
+                    <TableHead className="text-right font-bold">Amount (UGX)</TableHead>
+                    <TableHead className="text-right px-8 font-bold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {invoices.map((invoice) => (
                     <TableRow key={invoice.id} className="hover:bg-slate-50/50 transition-colors">
-                      <TableCell className="text-slate-500 px-8">{invoice.date}</TableCell>
-                      <TableCell className="font-bold text-slate-900">{invoice.guest}</TableCell>
-                      <TableCell><Badge variant="outline">Room {invoice.room}</Badge></TableCell>
-                      <TableCell>
-                        <Badge className={cn(
-                          "px-3 py-1 font-bold rounded-full",
-                          invoice.status === 'Paid' ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
-                        )}>
-                          {invoice.status}
-                        </Badge>
-                      </TableCell>
+                      <TableCell className="px-8 text-slate-500">{invoice.date}</TableCell>
+                      <TableCell className="font-black text-slate-900">{invoice.guest}</TableCell>
+                      <TableCell><Badge variant="outline" className="font-bold">Room {invoice.room}</Badge></TableCell>
+                      <TableCell><Badge className={cn("px-3 py-1 font-black rounded-lg", invoice.status === 'Paid' ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700")}>{invoice.status}</Badge></TableCell>
                       <TableCell className="text-right font-black text-blue-700">{invoice.amount}</TableCell>
                       <TableCell className="text-right px-8">
                         <div className="flex justify-end gap-2">
-                          {invoice.status === 'Pending' && (
-                            <Button variant="ghost" size="icon" className="text-green-600" onClick={() => handleMarkAsPaid(invoice.id)}>
-                              <CheckCircle size={18} />
-                            </Button>
-                          )}
-                          <Button variant="ghost" size="icon" className="text-blue-600" onClick={() => window.print()}><Printer size={18} /></Button>
-                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => { setSelectedId(invoice.id); setIsDeleteModalOpen(true); }}><Trash2 size={18} /></Button>
+                          <Button variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50 rounded-xl" onClick={() => handlePrint(invoice)}><Printer size={18} /></Button>
+                          <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50 rounded-xl"><Trash2 size={18} /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -147,33 +133,6 @@ const Billing = () => {
             </CardContent>
           </Card>
         </div>
-
-        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Create New Invoice</DialogTitle></DialogHeader>
-            <form onSubmit={handleAddInvoice} className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Guest Name</Label>
-                <Input value={newInvoice.guest} onChange={e => setNewInvoice({ ...newInvoice, guest: e.target.value })} required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Room Number</Label>
-                  <Input value={newInvoice.room} onChange={e => setNewInvoice({ ...newInvoice, room: e.target.value })} required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Total Amount (UGX)</Label>
-                  <Input value={newInvoice.amount} onChange={e => setNewInvoice({ ...newInvoice, amount: e.target.value })} required />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit" className="w-full bg-blue-700">Generate Invoice</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <DeleteDialog isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} />
         <Footer />
       </main>
     </div>
