@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
 import DeleteDialog from '@/components/DeleteDialog';
-import { Bed, Plus, Trash2, Edit3 } from 'lucide-react';
+import { Bed, Plus, Trash2, Edit3, MapPin, DollarSign, Layers } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -95,40 +95,56 @@ const Rooms: React.FC = () => {
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-2">
-            <Bed className="text-blue-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-800">Room Management</h2>
+        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-xl text-white">
+              <Bed size={24} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-slate-900">Room Inventory</h2>
+              <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Manage Accommodations</p>
+            </div>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setIsAddModalOpen(true)}>
+          <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold rounded-xl shadow-lg shadow-blue-900/20" onClick={() => setIsAddModalOpen(true)}>
             <Plus size={18} className="mr-2" /> Add New Room
           </Button>
         </header>
 
-        <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {rooms.map(room => (
-            <Card key={room.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all bg-white group">
-              <div className="relative h-40 overflow-hidden">
-                <img src={room.image} alt={room.id} className="w-full h-full object-cover" />
-                <div className="absolute top-2 right-2 flex gap-1">
-                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => { setSelectedRoomId(room.id); setIsDeleteModalOpen(true); }}>
-                    <Trash2 size={14} />
+            <Card key={room.id} className="overflow-hidden border-none shadow-xl hover:shadow-2xl transition-all duration-500 bg-white group rounded-[2rem]">
+              <div className="relative h-56 overflow-hidden">
+                <img src={room.image} alt={room.id} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <Button size="icon" variant="destructive" className="h-10 w-10 rounded-xl shadow-lg" onClick={() => { setSelectedRoomId(room.id); setIsDeleteModalOpen(true); }}>
+                    <Trash2 size={16} />
                   </Button>
                 </div>
+                <Badge className={cn("absolute bottom-4 left-4 px-3 py-1 font-black uppercase tracking-widest text-[10px] rounded-lg shadow-lg",
+                  room.status === 'Available' ? "bg-emerald-500 text-white" :
+                  room.status === 'Occupied' ? "bg-red-500 text-white" :
+                  "bg-amber-500 text-white"
+                )}>{room.status}</Badge>
               </div>
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg">Room {room.id}</h3>
-                  <Badge className={cn("text-[10px] uppercase",
-                    room.status === 'Available' ? "bg-green-500" :
-                    room.status === 'Occupied' ? "bg-red-500" :
-                    "bg-yellow-500"
-                  )}>{room.status}</Badge>
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-black text-xl text-slate-900">Room {room.id}</h3>
+                    <div className="flex items-center gap-1.5 text-slate-400 mt-1">
+                      <Layers size={12} />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{room.floor}</span>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="bg-blue-50 text-blue-700 font-bold rounded-lg">{room.type}</Badge>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">{room.type} • {room.floor}</p>
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-blue-600">UGX {room.price.toLocaleString()}</span>
-                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-blue-600">
+                
+                <div className="pt-4 border-t flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nightly Rate</span>
+                    <span className="font-black text-blue-600 text-lg">UGX {room.price.toLocaleString()}</span>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-blue-600 font-bold">
                     <Edit3 size={14} className="mr-1" /> Edit
                   </Button>
                 </div>
@@ -138,18 +154,18 @@ const Rooms: React.FC = () => {
         </div>
 
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Add New Room</DialogTitle></DialogHeader>
-            <form onSubmit={handleAddRoom} className="space-y-4 py-4">
+          <DialogContent className="rounded-[2rem]">
+            <DialogHeader><DialogTitle className="text-2xl font-black">Add New Room</DialogTitle></DialogHeader>
+            <form onSubmit={handleAddRoom} className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Room Number</Label>
-                  <Input value={newRoom.id} onChange={e => setNewRoom({...newRoom, id: e.target.value})} placeholder="e.g. 104" required />
+                  <Label className="font-bold">Room Number</Label>
+                  <Input value={newRoom.id} onChange={e => setNewRoom({...newRoom, id: e.target.value})} placeholder="e.g. 104" className="h-12 rounded-xl" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Floor</Label>
+                  <Label className="font-bold">Floor</Label>
                   <Select onValueChange={val => setNewRoom({...newRoom, floor: val})}>
-                    <SelectTrigger><SelectValue placeholder="Select Floor" /></SelectTrigger>
+                    <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Select Floor" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1st Floor">1st Floor</SelectItem>
                       <SelectItem value="2nd Floor">2nd Floor</SelectItem>
@@ -160,9 +176,9 @@ const Rooms: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Room Type</Label>
+                  <Label className="font-bold">Room Type</Label>
                   <Select onValueChange={val => setNewRoom({...newRoom, type: val})}>
-                    <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
+                    <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Select Type" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Standard">Standard</SelectItem>
                       <SelectItem value="Deluxe">Deluxe</SelectItem>
@@ -171,17 +187,17 @@ const Rooms: React.FC = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Price (UGX)</Label>
-                  <Input value={newRoom.price} onChange={e => setNewRoom({...newRoom, price: e.target.value})} placeholder="150,000" required />
+                  <Label className="font-bold">Price (UGX)</Label>
+                  <Input value={newRoom.price} onChange={e => setNewRoom({...newRoom, price: e.target.value})} placeholder="150,000" className="h-12 rounded-xl" required />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Upload Room Image</Label>
-                <Input type="file" accept="image/*" onChange={handleImageUpload} />
+                <Label className="font-bold">Upload Room Image</Label>
+                <Input type="file" accept="image/*" onChange={handleImageUpload} className="h-12 rounded-xl pt-2" />
               </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-                <Button type="submit" className="bg-blue-600">Save Room</Button>
+              <DialogFooter className="pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)} className="h-12 rounded-xl font-bold">Cancel</Button>
+                <Button type="submit" className="bg-blue-600 h-12 rounded-xl font-bold px-8">Save Room</Button>
               </DialogFooter>
             </form>
           </DialogContent>
