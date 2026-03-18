@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BedDouble, CalendarCheck, Users, Package, BarChart3, UserCog, AlertCircle, LogOut, Receipt, Briefcase, FileBarChart, MessageSquare, ShieldAlert, ImageIcon, Menu, ShieldCheck, UtensilsCrossed } from 'lucide-react';
+import { LayoutDashboard, BedDouble, CalendarCheck, Users, Package, BarChart3, UserCog, AlertCircle, LogOut, Receipt, Briefcase, FileBarChart, MessageSquare, ShieldAlert, ImageIcon, Menu, ShieldCheck, UtensilsCrossed, Sparkles, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ const SidebarContent = ({ role, userName, location, onClose }: any) => {
     { icon: CalendarCheck, label: 'BOOKINGS', path: '/bookings', roles: ['director', 'gm', 'staff'] },
     { icon: Receipt, label: 'BILLING', path: '/billing', roles: ['director', 'gm', 'accountant', 'staff'] },
     { icon: UtensilsCrossed, label: 'KITCHEN', path: '/kitchen', roles: ['director', 'gm', 'chef'] },
+    { icon: Sparkles, label: 'HOUSEKEEPING', path: '/housekeeping', roles: ['director', 'gm', 'staff'] },
+    { icon: Wrench, label: 'MAINTENANCE', path: '/maintenance', roles: ['director', 'gm', 'staff'] },
     { icon: Users, label: 'GUESTS', path: '/guests', roles: ['director', 'gm', 'staff'] },
     { icon: Package, label: 'INVENTORY', path: '/inventory', roles: ['director', 'gm', 'accountant'] },
     { icon: BarChart3, label: 'FINANCE', path: '/finance', roles: ['director', 'gm', 'accountant'] },

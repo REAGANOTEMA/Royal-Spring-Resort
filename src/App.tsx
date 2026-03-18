@@ -31,6 +31,8 @@ import Profile from "./pages/Profile";
 import Accountant from "./pages/Accountant";
 import UserManagement from "./pages/UserManagement";
 import Kitchen from "./pages/Kitchen";
+import Housekeeping from "./pages/Housekeeping";
+import Maintenance from "./pages/Maintenance";
 import NotFound from "./pages/NotFound";
 
 // Supabase client
@@ -102,6 +104,8 @@ const App: React.FC = () => {
             <Route path="/finance" element={<PrivateRoute><Finance /></PrivateRoute>} />
             <Route path="/hr" element={<PrivateRoute><HR /></PrivateRoute>} />
             <Route path="/kitchen" element={<PrivateRoute><Kitchen /></PrivateRoute>} />
+            <Route path="/housekeeping" element={<PrivateRoute><Housekeeping /></PrivateRoute>} />
+            <Route path="/maintenance" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
             <Route path="/job-postings" element={<PrivateRoute><JobPostings /></PrivateRoute>} />
             <Route path="/incidents" element={<PrivateRoute><Incidents /></PrivateRoute>} />
             <Route path="/billing" element={<PrivateRoute><Billing /></PrivateRoute>} />
