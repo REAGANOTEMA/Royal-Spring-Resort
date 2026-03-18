@@ -36,13 +36,24 @@ const AuthPage = () => {
           email,
           password,
           options: {
-            data: { role, full_name: email.split('@')[0] },
+            data: { 
+              role, 
+              full_name: email.split('@')[0] 
+            },
           },
         });
 
         if (error) throw error;
-        showSuccess("Account created! Please check your email for verification.");
-        setIsSignup(false);
+        
+        if (data.user && data.session) {
+          showSuccess("Account created and logged in!");
+          localStorage.setItem("userRole", role);
+          localStorage.setItem("userName", email.split('@')[0]);
+          navigate("/dashboard");
+        } else {
+          showSuccess("Account created! Please check your email for verification.");
+          setIsSignup(false);
+        }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -57,7 +68,8 @@ const AuthPage = () => {
         navigate("/dashboard");
       }
     } catch (err: any) {
-      showError(err.message || "Authentication failed.");
+      console.error("Auth Error:", err);
+      showError(err.message || "Authentication failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }

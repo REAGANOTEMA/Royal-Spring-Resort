@@ -12,6 +12,9 @@ import {
   ShieldCheck,
   Utensils,
   BedDouble,
+  Camera,
+  Palmtree,
+  Coffee
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,6 +44,30 @@ const heroSlides = [
     title: 'Gourmet Dining',
     subtitle: 'Savor world-class delicacies prepared by our master chefs.',
   },
+];
+
+const experienceCards = [
+  {
+    title: "Lush Vegetation",
+    desc: "Explore our serene compounds surrounded by nature's finest greenery and tropical flora.",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
+    icon: Leaf,
+    color: "bg-emerald-600"
+  },
+  {
+    title: "Cinematic Sunsets",
+    desc: "Witness breathtaking golden hours from our panoramic terraces overlooking the valley.",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800",
+    icon: Camera,
+    color: "bg-amber-600"
+  },
+  {
+    title: "Tropical Paradise",
+    desc: "A sanctuary where luxury meets the wild, offering a unique blend of comfort and adventure.",
+    image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800",
+    icon: Palmtree,
+    color: "bg-blue-600"
+  }
 ];
 
 const Index = () => {
@@ -185,22 +212,31 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">The Royal Experience</h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto">Immerse yourself in the beauty of our resort through our cinematic showcase.</p>
           </div>
-          {/* Video Cards */}
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Example Card */}
-            <div className="relative group rounded-[2.5rem] overflow-hidden shadow-2xl aspect-[4/5]">
-              <video autoPlay muted loop playsInline className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-palm-trees-and-a-blue-sky-42473-large.mp4" type="video/mp4" />
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-10">
-                <div className="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
-                  <Leaf className="text-white" size={24} />
+            {experienceCards.map((card, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.2 }}
+                viewport={{ once: true }}
+                className="relative group rounded-[2.5rem] overflow-hidden shadow-2xl aspect-[4/5]"
+              >
+                <img 
+                  src={card.image} 
+                  alt={card.title} 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-10">
+                  <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg", card.color)}>
+                    <card.icon className="text-white" size={28} />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-3">{card.title}</h3>
+                  <p className="text-slate-300 text-lg leading-relaxed">{card.desc}</p>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Lush Vegetation</h3>
-                <p className="text-slate-300 text-sm">Explore our serene compounds surrounded by nature's finest greenery.</p>
-              </div>
-            </div>
-            {/* Add other cards similarly */}
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -216,6 +252,9 @@ const Index = () => {
             { icon: Waves, title: 'Infinity Pool', desc: 'Dive into crystal clear waters with breathtaking views of our lush compounds.' },
             { icon: Wifi, title: 'Ultra-Fast WiFi', desc: 'Stay connected with high-speed fiber optic internet throughout the resort.' },
             { icon: ShieldCheck, title: 'Elite Security', desc: 'Your safety is guaranteed with our 24/7 professional security detail.' },
+            { icon: Utensils, title: 'Fine Dining', desc: 'Experience culinary excellence with our diverse menu of local and international dishes.' },
+            { icon: BedDouble, title: 'Luxury Suites', desc: 'Rest in meticulously designed rooms that blend modern comfort with royal elegance.' },
+            { icon: Coffee, title: 'Royal Lounge', desc: 'Relax in our exclusive lounge area with premium refreshments and a serene atmosphere.' },
           ].map((feature, i) => (
             <Card key={i} className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden rounded-3xl">
               <CardContent className="p-10 flex flex-col items-center text-center">
