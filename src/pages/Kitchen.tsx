@@ -99,7 +99,6 @@ const Kitchen = () => {
             </div>
           </div>
           <div className="flex gap-3">
-            <img src="/logo.png" alt="Logo" className="h-10 object-contain mr-4" />
             <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold rounded-xl shadow-lg" onClick={() => setIsAddModalOpen(true)}>
               <Plus size={18} className="mr-2" /> Add New Stock
             </Button>

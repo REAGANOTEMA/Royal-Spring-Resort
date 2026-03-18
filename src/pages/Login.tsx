@@ -54,6 +54,13 @@ const AuthPage = () => {
         if (error) throw error;
         
         if (data.user && data.session) {
+          // Create staff record automatically
+          await supabase.from('staff').insert([{
+            name: email.split('@')[0],
+            role: role,
+            status: 'Active'
+          }]);
+
           showSuccess("Account created and logged in!");
           localStorage.setItem("userRole", role);
           localStorage.setItem("userName", email.split('@')[0]);
@@ -77,7 +84,7 @@ const AuthPage = () => {
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
-      showError("Connection failed. You can use 'Demo Access' to check the app while Supabase is connecting.");
+      showError(err.message || "Authentication failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +92,6 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 p-4 relative overflow-hidden">
-      {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600 rounded-full blur-[120px]" />
@@ -182,7 +188,7 @@ const AuthPage = () => {
               className="text-slate-400 text-sm font-bold hover:text-blue-600 transition-colors" 
               onClick={() => setIsSignup(!isSignup)}
             >
-              {isSignup ? "Already have an account? Sign In" : "Need an account? Contact HR"}
+              {isSignup ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
           </div>
         </CardContent>
