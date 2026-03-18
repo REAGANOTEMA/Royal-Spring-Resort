@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import { useRoyalVoice } from "@/components/VoiceConcierge";
 import { Users, UserPlus, Clock, ShieldCheck, LogIn, LogOut, Timer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const HR = () => {
   const [staff, setStaff] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { speak } = useRoyalVoice();
 
   const fetchData = async () => {
     const { data: staffData } = await supabase.from('staff').select('*');
@@ -31,12 +33,25 @@ const HR = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    
+    // Check for 10-hour shifts every minute
+    const interval = setInterval(() => {
+      attendance.forEach(log => {
+        if (!log.check_out) {
+          const hours = (new Date().getTime() - new Date(log.check_in).getTime()) / (1000 * 60 * 60);
+          if (hours >= 10 && hours < 10.02) { // Trigger once around 10 hours
+            speak(`Attention ${log.staff_name}. You have completed 10 hours of your shift. Please consider checking out soon.`);
+          }
+        }
+      });
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [attendance, speak]);
 
   const handleClockAction = async (staffMember: any) => {
     setLoading(true);
     try {
-      // Check if staff is already clocked in
       const { data: activeLog } = await supabase
         .from('check_in_logs')
         .select('*')
@@ -55,14 +70,16 @@ const HR = () => {
           .update({ check_out: checkOutTime.toISOString(), total_hours: hours })
           .eq('id', activeLog.id);
         
-        showSuccess(`${staffMember.name} clocked out. Total: ${hours} hrs`);
+        speak(`Congratulations ${staffMember.name}. You have successfully completed your shift of ${hours} hours. Have a wonderful rest.`);
+        showSuccess(`${staffMember.name} clocked out.`);
       } else {
         // Clock In
         await supabase
           .from('check_in_logs')
           .insert([{ staff_id: staffMember.id, staff_name: staffMember.name }]);
         
-        showSuccess(`${staffMember.name} clocked in successfully.`);
+        speak(`Welcome to work, ${staffMember.name}. Your shift has officially started. I will be here to guide you.`);
+        showSuccess(`${staffMember.name} clocked in.`);
       }
       fetchData();
     } catch (err: any) {
@@ -84,9 +101,6 @@ const HR = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Staff & Attendance</p>
             </div>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-black rounded-xl shadow-lg shadow-blue-900/20">
-            <UserPlus size={18} className="mr-2" /> ADD STAFF
-          </Button>
         </header>
 
         <div className="p-8 space-y-8">

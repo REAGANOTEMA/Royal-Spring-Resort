@@ -4,16 +4,7 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import {
-  User,
-  Mail,
-  Briefcase,
-  Calendar,
-  Banknote,
-  Camera,
-  ShieldCheck,
-  Lock,
-  Wallet,
-  TrendingDown
+  User, Mail, Briefcase, Calendar, Banknote, Camera, ShieldCheck, Lock, Wallet, TrendingDown, Phone, MapPin, Clock, Save
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,182 +12,241 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { showSuccess, showError } from "@/utils/toast";
-import { changeUserEmail, changeUserPassword, supabase } from "@/lib/supabase";
+import { Textarea } from "@/components/ui/textarea";
+import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
+import { supabase } from "@/lib/supabase";
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
-  const [payroll, setPayroll] = useState<any>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [newEmail, setNewEmail] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
+  const [staff, setStaff] = useState<any>(null);
+  const [attendance, setAttendance] = useState<any[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<any>({});
 
-  useEffect(() => {
-    const role = localStorage.getItem("userRole") || "staff";
+  const fetchProfile = async () => {
     const name = localStorage.getItem("userName") || "Staff Member";
+    const { data: staffData } = await supabase.from('staff').select('*').eq('name', name).single();
     
-    setUser({
-      name,
-      role: role.replace("_", " ").toUpperCase(),
-      email: `${name.toLowerCase().replace(" ", ".")}@royalsprings.com`,
-      dept: role === "director" ? "Management" : "Operations",
-      joined: "Jan 2024",
-    });
-
-    const fetchPayroll = async () => {
-      const { data } = await supabase.from('staff').select('*').eq('name', name).single();
-      if (data) setPayroll(data);
-    };
-    fetchPayroll();
-  }, []);
-
-  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (ev) => setProfileImage(ev.target?.result as string);
-    reader.readAsDataURL(file);
-
-    showSuccess("Profile picture updated successfully!");
-  };
-
-  const handleUpdateProfile = async () => {
-    try {
-      if (newEmail) await changeUserEmail(newEmail);
-      if (newPassword) await changeUserPassword(newPassword);
-      showSuccess("Profile updated successfully!");
-      setUser((prev: any) => ({ ...prev, email: newEmail || prev.email }));
-      setNewEmail("");
-      setNewPassword("");
-    } catch (err: any) {
-      showError(err.message || "Failed to update profile");
+    if (staffData) {
+      setStaff(staffData);
+      setFormData(staffData);
+      
+      // Fetch attendance for this staff
+      const { data: attendData } = await supabase
+        .from('check_in_logs')
+        .select('*')
+        .eq('staff_id', staffData.id)
+        .order('check_in', { ascending: false });
+      setAttendance(attendData || []);
     }
   };
 
-  if (!user) return null;
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !staff) return;
+
+    const toastId = showLoading("Uploading profile image...");
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target?.result as string;
+      const { error } = await supabase.from('staff').update({ avatar_url: base64 }).eq('id', staff.id);
+      if (error) showError(error.message);
+      else {
+        setStaff({ ...staff, avatar_url: base64 });
+        showSuccess("Profile picture updated!");
+      }
+      dismissToast(toastId);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveProfile = async () => {
+    const toastId = showLoading("Saving profile changes...");
+    const { error } = await supabase.from('staff').update({
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      bio: formData.bio
+    }).eq('id', staff.id);
+
+    dismissToast(toastId);
+    if (error) showError(error.message);
+    else {
+      showSuccess("Profile updated successfully!");
+      setIsEditing(false);
+      fetchProfile();
+    }
+  };
+
+  if (!staff) return <div className="h-screen flex items-center justify-center font-black text-blue-600">Loading Profile...</div>;
+
+  const totalHours = attendance.reduce((acc, log) => acc + (parseFloat(log.total_hours) || 0), 0);
 
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-800">My Royal Profile</h2>
-          <Badge className="bg-blue-100 text-blue-700 font-bold">Active Session</Badge>
+        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
+          <h2 className="text-xl font-black text-slate-900">Executive Profile</h2>
+          <div className="flex gap-3">
+            {isEditing ? (
+              <Button onClick={handleSaveProfile} className="bg-emerald-600 hover:bg-emerald-700 font-black rounded-xl">
+                <Save size={18} className="mr-2" /> SAVE CHANGES
+              </Button>
+            ) : (
+              <Button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-blue-700 font-black rounded-xl">
+                EDIT PROFILE
+              </Button>
+            )}
+          </div>
         </header>
 
-        <div className="p-8 max-w-5xl mx-auto w-full space-y-8">
-          {/* Profile Header Card */}
-          <Card className="border-none shadow-xl overflow-hidden bg-white rounded-3xl">
-            <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-700" />
-            <CardContent className="relative pt-0 pb-8 px-8">
-              <div className="flex flex-col md:flex-row items-end gap-6 -mt-12 mb-6">
+        <div className="p-8 max-w-6xl mx-auto w-full space-y-8">
+          {/* Header Card */}
+          <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
+            <div className="h-40 bg-gradient-to-r from-blue-700 via-indigo-800 to-slate-900" />
+            <CardContent className="relative pt-0 pb-10 px-10">
+              <div className="flex flex-col md:flex-row items-end gap-8 -mt-16 mb-8">
                 <div className="relative group">
-                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
-                    {profileImage ? (
-                      <AvatarImage src={profileImage} />
-                    ) : (
-                      <AvatarFallback className="bg-slate-100 text-blue-600 text-4xl font-black">
-                        {user.name.charAt(0)}
-                      </AvatarFallback>
-                    )}
+                  <Avatar className="h-40 w-40 border-8 border-white shadow-2xl rounded-[2.5rem]">
+                    <AvatarImage src={staff.avatar_url} className="object-cover" />
+                    <AvatarFallback className="bg-slate-100 text-blue-600 text-5xl font-black">
+                      {staff.name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
-                  <label className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors cursor-pointer">
-                    <Camera size={18} />
-                    <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                  <label className="absolute bottom-2 right-2 p-3 bg-blue-600 text-white rounded-2xl shadow-xl hover:bg-blue-700 transition-all cursor-pointer hover:scale-110">
+                    <Camera size={20} />
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   </label>
                 </div>
-                <div className="flex-1 pb-2">
-                  <h1 className="text-3xl font-black text-slate-900">{user.name}</h1>
-                  <p className="text-blue-600 font-bold tracking-widest uppercase text-sm">{user.role}</p>
+                <div className="flex-1 pb-4">
+                  <h1 className="text-4xl font-black text-slate-900 tracking-tighter">{staff.name}</h1>
+                  <div className="flex items-center gap-3 mt-2">
+                    <Badge className="bg-blue-100 text-blue-700 font-black px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+                      {staff.role}
+                    </Badge>
+                    <span className="text-slate-400 font-bold text-sm flex items-center gap-1">
+                      <Calendar size={14} /> Joined {staff.joined_at}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-50 rounded-lg text-slate-400"><Mail size={20} /></div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-slate-400">Email Address</p>
-                    <p className="font-bold text-slate-700">{user.email}</p>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
+                  {isEditing ? (
+                    <Input value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="h-10 rounded-xl" />
+                  ) : (
+                    <p className="font-bold text-slate-700">{staff.email || 'Not set'}</p>
+                  )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-50 rounded-lg text-slate-400"><Briefcase size={20} /></div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-slate-400">Department</p>
-                    <p className="font-bold text-slate-700">{user.dept}</p>
-                  </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone Number</p>
+                  {isEditing ? (
+                    <Input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-10 rounded-xl" />
+                  ) : (
+                    <p className="font-bold text-slate-700">{staff.phone || 'Not set'}</p>
+                  )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-50 rounded-lg text-slate-400"><Calendar size={20} /></div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-slate-400">Member Since</p>
-                    <p className="font-bold text-slate-700">{user.joined}</p>
-                  </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Physical Address</p>
+                  {isEditing ? (
+                    <Input value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="h-10 rounded-xl" />
+                  ) : (
+                    <p className="font-bold text-slate-700">{staff.address || 'Not set'}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Payroll & Security Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* My Payroll Card */}
-            <Card className="border-none shadow-xl bg-white rounded-3xl overflow-hidden">
-              <CardHeader className="bg-slate-900 text-white">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Stats & Attendance */}
+            <Card className="lg:col-span-2 border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-slate-900 text-white p-8">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <Wallet size={20} className="text-blue-400" /> My Payroll & Earnings
+                  <Clock size={20} className="text-blue-400" /> Attendance & Work Hours
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                <div className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 text-green-600 rounded-lg"><Banknote size={20} /></div>
-                    <span className="font-bold text-slate-600">Base Salary</span>
+              <CardContent className="p-8 space-y-8">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="p-6 bg-blue-50 rounded-3xl border border-blue-100">
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Total Hours Worked</p>
+                    <h3 className="text-3xl font-black text-slate-900">{totalHours.toFixed(1)} hrs</h3>
                   </div>
-                  <span className="font-black text-slate-900">UGX {payroll?.salary || '0'}</span>
-                </div>
-                <div className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 text-amber-600 rounded-lg"><TrendingDown size={20} /></div>
-                    <span className="font-bold text-slate-600">Advances</span>
+                  <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
+                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Shift Completion</p>
+                    <h3 className="text-3xl font-black text-slate-900">{attendance.length} Shifts</h3>
                   </div>
-                  <span className="font-black text-red-600">-UGX {payroll?.advance || '0'}</span>
                 </div>
-                <div className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-red-100 text-red-600 rounded-lg"><TrendingDown size={20} /></div>
-                    <span className="font-bold text-slate-600">Deductions</span>
+
+                <div className="space-y-4">
+                  <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs">Recent Shift Logs</h4>
+                  <div className="space-y-3">
+                    {attendance.slice(0, 5).map((log) => (
+                      <div key={log.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div>
+                          <p className="font-bold text-slate-700">{new Date(log.check_in).toLocaleDateString()}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase">
+                            {new Date(log.check_in).toLocaleTimeString()} - {log.check_out ? new Date(log.check_out).toLocaleTimeString() : 'Active'}
+                          </p>
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-700 font-black">{log.total_hours || '0'}h</Badge>
+                      </div>
+                    ))}
                   </div>
-                  <span className="font-black text-red-600">-UGX {payroll?.deduction || '0'}</span>
-                </div>
-                <div className="pt-4 border-t flex justify-between items-center">
-                  <span className="text-lg font-black text-slate-900">Net Payable</span>
-                  <span className="text-2xl font-black text-blue-700">UGX {payroll?.net || '0'}</span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Security Settings Card */}
-            <Card className="border-none shadow-xl bg-white rounded-3xl overflow-hidden">
-              <CardHeader className="bg-slate-900 text-white">
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <ShieldCheck size={20} className="text-blue-400" /> Security Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-2">
-                  <Label>Update Email</Label>
-                  <Input type="email" placeholder="New Email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Update Password</Label>
-                  <Input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <Button className="w-full bg-blue-700 hover:bg-blue-800 font-bold h-12" onClick={handleUpdateProfile}>
-                  <Lock size={18} className="mr-2" /> Update Credentials
-                </Button>
-              </CardContent>
-            </Card>
+            {/* Bio & Payroll */}
+            <div className="space-y-8">
+              <Card className="border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
+                <CardHeader className="bg-slate-900 text-white p-8">
+                  <CardTitle className="text-lg font-bold">About Me</CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  {isEditing ? (
+                    <Textarea 
+                      value={formData.bio} 
+                      onChange={e => setFormData({...formData, bio: e.target.value})} 
+                      placeholder="Tell us about your role..." 
+                      className="min-h-[150px] rounded-2xl"
+                    />
+                  ) : (
+                    <p className="text-slate-600 font-medium leading-relaxed">
+                      {staff.bio || "No bio provided yet. Click edit to add your professional summary."}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-xl bg-blue-700 text-white rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white/10 rounded-2xl"><Wallet size={24} /></div>
+                    <div>
+                      <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest">Net Payable</p>
+                      <h3 className="text-2xl font-black">UGX {parseFloat(staff.net).toLocaleString()}</h3>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-white/10 space-y-3">
+                    <div className="flex justify-between text-sm font-bold">
+                      <span className="opacity-60">Base Salary</span>
+                      <span>UGX {parseFloat(staff.salary).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold text-red-300">
+                      <span>Deductions</span>
+                      <span>-UGX {parseFloat(staff.deduction).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
         <Footer />
