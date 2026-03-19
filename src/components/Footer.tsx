@@ -44,11 +44,11 @@ const Footer = () => {
           <ul className="space-y-4 text-slate-400">
             <li className="flex items-start gap-3">
               <MapPin size={20} className="text-blue-500 shrink-0" />
-              <span>Royal Springs Resort, <br/>Kampala, Uganda</span>
+              <span>Iganga, after Nakalama trading center<br/>along Tororo road at the right side of the road</span>
             </li>
             <li className="flex items-center gap-3">
               <Phone size={20} className="text-blue-500 shrink-0" />
-              <span>+256 772 514 889</span>
+              <span>+256 772 572 645</span>
             </li>
             <li className="flex items-center gap-3">
               <Mail size={20} className="text-blue-500 shrink-0" />
@@ -62,7 +62,7 @@ const Footer = () => {
           <h3 className="text-lg font-bold mb-4">Need Support?</h3>
           <p className="text-sm text-slate-400 mb-6">Our team is available 24/7 to assist you with your inquiries.</p>
           <a 
-            href="https://wa.me/256772514889" 
+            href="https://wa.me/256772572645" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center w-full py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl transition-all"

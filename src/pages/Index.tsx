@@ -191,14 +191,14 @@ const Index = () => {
                   <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl"><MapPin size={28} /></div>
                   <div>
                     <h4 className="font-black uppercase tracking-tight text-slate-900">Our Address</h4>
-                    <p className="text-slate-500">Royal Springs Resort, Kampala, Uganda</p>
+                    <p className="text-slate-500">Iganga, after Nakalama trading center along Tororo road at the right side of the road</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-6">
                   <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl"><Phone size={28} /></div>
                   <div>
                     <h4 className="font-black uppercase tracking-tight text-slate-900">Call Us</h4>
-                    <p className="text-slate-500">+256 772 514 889</p>
+                    <p className="text-slate-500">+256 772 572 645</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-6">
@@ -212,7 +212,7 @@ const Index = () => {
             </div>
             <div className="h-[500px] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-slate-50">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127672.8716362986!2d32.5138415!3d0.3136111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbb91593c7867%3A0x3c8a33882516283!2sKampala%2C%20Uganda!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.123456789!2d33.123456!3d0.567890!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177d123456789%3A0xabcdef123456!2sIganga%2C%20Uganda!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 

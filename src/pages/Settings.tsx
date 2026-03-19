@@ -17,9 +17,12 @@ const Settings = () => {
     hotel_name: "",
     contact_email: "",
     contact_phone: "",
+    whatsapp: "",
     address: "",
     currency: "UGX",
-    tax_rate: "18"
+    tax_rate: "18",
+    developer_name: "",
+    developer_phone: ""
   });
 
   useEffect(() => {
@@ -100,6 +103,13 @@ const Settings = () => {
                     <Input value={config.contact_phone} onChange={e => setConfig({...config, contact_phone: e.target.value})} className="pl-12 h-12 rounded-xl bg-slate-50 border-none" />
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <Label className="font-bold text-slate-700">WhatsApp Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Input value={config.whatsapp} onChange={e => setConfig({...config, whatsapp: e.target.value})} className="pl-12 h-12 rounded-xl bg-slate-50 border-none" />
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -139,12 +149,28 @@ const Settings = () => {
                 </div>
               </CardContent>
             </Card>
-          </form>
-        </div>
-        <Footer />
-      </main>
-    </div>
-  );
+
+            {/* Developer Information */}
+            <Card className="border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
+              <CardHeader className="bg-slate-900 text-white p-6">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <ShieldCheck size={20} className="text-blue-400" /> Developer Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <Label className="font-bold text-slate-700">Developer Name</Label>
+                  <Input value={config.developer_name} onChange={e => setConfig({...config, developer_name: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-none" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-bold text-slate-700">Developer Phone</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Input value={config.developer_phone} onChange={e => setConfig({...config, developer_phone: e.target.value})} className="pl-12 h-12 rounded-xl bg-slate-50 border-none" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 };
 
 export default Settings;
