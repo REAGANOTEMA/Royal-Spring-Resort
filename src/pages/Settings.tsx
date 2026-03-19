@@ -171,6 +171,11 @@ const Settings = () => {
                 </div>
               </CardContent>
             </Card>
+          </form>
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default Settings;
