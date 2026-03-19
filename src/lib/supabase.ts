@@ -4,13 +4,12 @@ import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-
 
 /**
  * Initialize Supabase client (frontend-safe)
- * Uses VITE_ environment variables for URL & anon key
+ * Uses NEXT_PUBLIC_ environment variables for URL & anon key
  */
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// If keys are missing, we use a dummy URL that won't crash the initialization
-// but will fail gracefully during actual requests with a clear error.
+// Check if keys are provided
 const isConfigured = Boolean(supabaseUrl && supabaseKey);
 
 export const supabase: SupabaseClient = createClient(
@@ -26,7 +25,7 @@ export const supabase: SupabaseClient = createClient(
 
 /** Sign up a new user */
 export const signUp = async (email: string, password: string) => {
-  if (!isConfigured) throw new Error("Supabase is not connected. Please click 'Add Supabase' in the editor.");
+  if (!isConfigured) throw new Error("Supabase is not connected. Please configure NEXT_PUBLIC_SUPABASE_URL & NEXT_PUBLIC_SUPABASE_ANON_KEY.");
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
   return data;
@@ -34,7 +33,7 @@ export const signUp = async (email: string, password: string) => {
 
 /** Sign in an existing user */
 export const signIn = async (email: string, password: string) => {
-  if (!isConfigured) throw new Error("Supabase is not connected. Please click 'Add Supabase' in the editor.");
+  if (!isConfigured) throw new Error("Supabase is not connected. Please configure NEXT_PUBLIC_SUPABASE_URL & NEXT_PUBLIC_SUPABASE_ANON_KEY.");
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return data;
