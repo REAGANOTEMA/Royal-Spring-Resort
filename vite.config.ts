@@ -10,5 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // allows import from "@/components/..."
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000, // Increase chunk size warning limit to 1000KB
+  },
   base: "./", // important for relative paths on Render
 });

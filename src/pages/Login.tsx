@@ -56,7 +56,9 @@ const AuthPage = () => {
         if (data.user && data.session) {
           // Create staff record automatically
           await supabase.from('staff').insert([{
+            id: data.user.id,
             name: email.split('@')[0],
+            email: email,
             role: role,
             status: 'Active'
           }]);
