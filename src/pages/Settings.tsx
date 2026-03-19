@@ -70,9 +70,12 @@ const Settings = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Global Configuration</p>
             </div>
           </div>
-          <Button onClick={handleSave} className="bg-blue-700 hover:bg-blue-800 font-black h-12 px-8 rounded-xl shadow-lg shadow-blue-900/20" disabled={loading}>
-            <Save size={18} className="mr-2" /> SAVE CHANGES
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button onClick={handleSave} className="bg-blue-700 hover:bg-blue-800 font-black h-12 px-8 rounded-xl shadow-lg shadow-blue-900/20" disabled={loading}>
+              <Save size={18} className="mr-2" /> SAVE CHANGES
+            </Button>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
+          </div>
         </header>
 
         <div className="p-8 max-w-4xl mx-auto w-full space-y-8">

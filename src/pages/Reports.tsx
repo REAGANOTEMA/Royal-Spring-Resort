@@ -85,6 +85,7 @@ const Reports: React.FC = () => {
             <Button variant="outline" className="font-black h-12 rounded-xl border-slate-200" onClick={() => window.print()}>
               <Download size={18} className="mr-2" /> EXPORT PDF
             </Button>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
           </div>
         </header>
 

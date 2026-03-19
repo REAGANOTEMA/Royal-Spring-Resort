@@ -95,8 +95,7 @@ const Inventory = () => {
             <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold rounded-xl shadow-lg shadow-blue-900/20" onClick={() => setIsAddModalOpen(true)}>
               <Plus size={18} className="mr-2" /> Add New Item
             </Button>
-          </div>
-        </header>
+          </div>          <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />        </header>
 
         <div className="p-8 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

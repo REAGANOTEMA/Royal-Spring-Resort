@@ -36,6 +36,9 @@ import Maintenance from "./pages/Maintenance";
 import Payroll from "./pages/Payroll";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import RoomsDivision from "./pages/RoomsDivision";
+import FoodAndBeverage from "./pages/FoodAndBeverage";
+import Engineering from "./pages/Engineering";
 
 // Supabase client
 import { supabase } from "@/lib/supabase";
@@ -47,7 +50,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for Demo Mode first
+    // Demo Mode
     const isDemo = localStorage.getItem("demoMode") === "true";
     if (isDemo) {
       setSession({ user: { email: 'demo@royalsprings.com' } });
@@ -55,29 +58,55 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    let subscription: any;
+
     // Check current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    const getSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Supabase session error:", error);
+        setSession(null);
+      } else {
+        setSession(data.session);
+        if (data.session) {
+          const role = data.session.user.user_metadata?.role || 'staff';
+          const name = data.session.user.user_metadata?.full_name || data.session.user.email?.split('@')[0];
+          localStorage.setItem("userRole", role);
+          localStorage.setItem("userName", name || 'Staff');
+        }
+      }
       setLoading(false);
-    });
+    };
+
+    getSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    subscription = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
         const role = session.user.user_metadata?.role || 'staff';
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
         localStorage.setItem("userRole", role);
         localStorage.setItem("userName", name || 'Staff');
+      } else {
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("userName");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => subscription?.subscription?.unsubscribe();
   }, []);
 
-  if (loading) return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 font-bold text-blue-600">Loading Royal Springs...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 font-bold text-blue-600">
+        Loading Royal Springs...
+      </div>
+    );
+  }
+
   if (!session) return <Navigate to="/login" replace />;
-  
+
   return <>{children}</>;
 };
 
@@ -87,7 +116,6 @@ const App: React.FC = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-
         <BrowserRouter>
           <Routes>
             {/* Public Pages */}
@@ -97,7 +125,7 @@ const App: React.FC = () => {
             <Route path="/careers" element={<Careers />} />
             <Route path="/help" element={<Help />} />
 
-            {/* Private / App Pages */}
+            {/* Private Pages */}
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/rooms" element={<PrivateRoute><Rooms /></PrivateRoute>} />
             <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
@@ -120,8 +148,14 @@ const App: React.FC = () => {
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/accountant" element={<PrivateRoute><Accountant /></PrivateRoute>} />
             <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
+            
+            {/* Department Pages */}
+            <Route path="/departments/rooms" element={<PrivateRoute><RoomsDivision /></PrivateRoute>} />
+            <Route path="/departments/food-beverage" element={<PrivateRoute><FoodAndBeverage /></PrivateRoute>} />
+            <Route path="/departments/engineering" element={<PrivateRoute><Engineering /></PrivateRoute>} />
+            <Route path="/departments/housekeeping" element={<PrivateRoute><Housekeeping /></PrivateRoute>} />
 
-            {/* 404 Fallback */}
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

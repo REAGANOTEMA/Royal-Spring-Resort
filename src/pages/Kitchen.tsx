@@ -103,6 +103,7 @@ const Kitchen = () => {
               <Plus size={18} className="mr-2" /> Add New Stock
             </Button>
           </div>
+          <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
         </header>
 
         <div className="p-8 space-y-8">

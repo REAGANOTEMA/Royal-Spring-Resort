@@ -118,6 +118,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+          <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
         </header>
 
         <div className="p-8 space-y-8">

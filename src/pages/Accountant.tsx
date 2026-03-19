@@ -89,6 +89,7 @@ const Accountant = () => {
               <Plus size={18} className="mr-2" /> RECORD EXPENSE
             </Button>
           </div>
+          <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
         </header>
 
         <div className="p-8 space-y-8">

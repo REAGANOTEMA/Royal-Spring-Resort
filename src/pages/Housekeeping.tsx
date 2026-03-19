@@ -1,224 +1,343 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import { Sparkles, CheckCircle2, Clock, AlertCircle, Search, Filter, User, LayoutGrid, List } from 'lucide-react';
+import DepartmentHierarchy from '@/components/DepartmentHierarchy';
+import { ArrowLeft, Sparkles, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { showSuccess, showError } from '@/utils/toast';
+import { Badge } from '@/components/ui/badge';
+import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
-import { cn } from '@/lib/utils';
 
 const Housekeeping = () => {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const [supplies, setSupplies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [stats, setStats] = useState({ total: 0, lowStock: 0, categories: 0 });
+  const [itemName, setItemName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [unit, setUnit] = useState('pieces');
+  const [category, setCategory] = useState('Cleaning');
 
-  const fetchTasks = async () => {
-    const { data, error } = await supabase
-      .from('housekeeping')
-      .select('*, rooms(type)')
-      .order('last_cleaned', { ascending: false });
-    
-    if (error) showError(error.message);
-    else setTasks(data || []);
+  const categories = ['Cleaning', 'Linens', 'Equipment', 'Chemicals'];
+
+  const fetchSupplies = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('housekeeping_supplies')
+        .select('*')
+        .eq('department', 'Housekeeping')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setSupplies(data || []);
+
+      // Calculate stats
+      const totalItems = (data || []).length;
+      const lowStockItems = (data || []).filter((s: any) => s.stock_quantity < 10).length;
+      const uniqueCategories = new Set((data || []).map((s: any) => s.category)).size;
+
+      setStats({
+        total: totalItems,
+        lowStock: lowStockItems,
+        categories: uniqueCategories
+      });
+    } catch (err: any) {
+      showError(err.message || 'Failed to fetch supplies');
+    }
   };
 
   useEffect(() => {
-    fetchTasks();
+    fetchSupplies();
   }, []);
 
-  const handleStatusUpdate = async (id: string, roomId: string, newStatus: string) => {
+  const handleAddSupply = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!itemName.trim() || !quantity.trim()) {
+      showError('Please fill in all fields');
+      return;
+    }
+
+    const toastId = showLoading('Adding supply item...');
     setLoading(true);
+
     try {
-      const { error: hError } = await supabase
-        .from('housekeeping')
-        .update({ status: newStatus, last_cleaned: newStatus === 'Completed' ? new Date().toISOString() : undefined })
-        .eq('id', id);
+      const { error } = await supabase.from('housekeeping_supplies').insert([
+        {
+          item_name: itemName.trim(),
+          stock_quantity: parseInt(quantity),
+          unit,
+          category,
+          department: 'Housekeeping'
+        }
+      ]);
 
-      if (hError) throw hError;
+      if (error) throw error;
 
-      // Update room status if completed
-      if (newStatus === 'Completed' || newStatus === 'Inspected') {
-        await supabase.from('rooms').update({ status: 'Available' }).eq('id', roomId);
-      } else if (newStatus === 'In Progress') {
-        await supabase.from('rooms').update({ status: 'Cleaning' }).eq('id', roomId);
-      }
-
-      showSuccess(`Task marked as ${newStatus}`);
-      fetchTasks();
+      dismissToast(toastId);
+      showSuccess('Supply item added successfully');
+      setItemName('');
+      setQuantity('');
+      setUnit('pieces');
+      setCategory('Cleaning');
+      await fetchSupplies();
     } catch (err: any) {
-      showError(err.message);
+      dismissToast(toastId);
+      showError(err.message || 'Failed to add supply');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDeleteSupply = async (id: string) => {
+    const toastId = showLoading('Deleting supply...');
+    try {
+      const { error } = await supabase
+        .from('housekeeping_supplies')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      dismissToast(toastId);
+      showSuccess('Supply deleted successfully');
+      await fetchSupplies();
+    } catch (err: any) {
+      dismissToast(toastId);
+      showError(err.message || 'Failed to delete supply');
+    }
+  };
+
+  const suppliesByCategory = categories.reduce((acc: any, cat: string) => {
+    acc[cat] = supplies.filter(s => s.category === cat);
+    return acc;
+  }, {});
+
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
       <Sidebar />
-      <main className="flex-1 flex flex-col">
-        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-600 rounded-xl text-white">
-              <Sparkles size={24} />
+      <div className="flex-1">
+        <main className="p-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="w-6 h-6 text-white" />
+              </button>
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-8 h-8 text-indigo-400" />
+                <h1 className="text-4xl font-bold text-white">Housekeeping Department</h1>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-black text-slate-900">Housekeeping & Sanitation</h2>
-              <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Room Readiness Control</p>
-            </div>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
           </div>
-          <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
-            <Button 
-              variant={viewMode === 'grid' ? 'default' : 'ghost'} 
-              size="sm" 
-              className="rounded-lg"
-              onClick={() => setViewMode('grid')}
-            >
-              <LayoutGrid size={18} />
-            </Button>
-            <Button 
-              variant={viewMode === 'list' ? 'default' : 'ghost'} 
-              size="sm" 
-              className="rounded-lg"
-              onClick={() => setViewMode('list')}
-            >
-              <List size={18} />
-            </Button>
-          </div>
-        </header>
 
-        <div className="p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-none shadow-xl bg-white rounded-3xl">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl"><Clock size={28} /></div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Cleaning</p>
-                  <h3 className="text-2xl font-black text-slate-900">{tasks.filter(t => t.status === 'Pending').length} Rooms</h3>
-                </div>
+          {/* Department Hierarchy */}
+          <div className="mb-8">
+            <DepartmentHierarchy departmentName="Housekeeping" />
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <Card className="bg-indigo-900/40 border-indigo-700/50 hover:bg-indigo-900/60 transition-colors">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-indigo-300">Total Supplies</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white">{stats.total}</div>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-xl bg-white rounded-3xl">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl"><Sparkles size={28} /></div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">In Progress</p>
-                  <h3 className="text-2xl font-black text-slate-900">{tasks.filter(t => t.status === 'In Progress').length} Rooms</h3>
-                </div>
+
+            <Card className="bg-orange-900/40 border-orange-700/50 hover:bg-orange-900/60 transition-colors">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-orange-300">Low Stock Items</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white">{stats.lowStock}</div>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-xl bg-emerald-600 text-white rounded-3xl">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-white/10 rounded-2xl"><CheckCircle2 size={28} /></div>
-                <div>
-                  <p className="text-xs font-bold text-emerald-100 uppercase tracking-widest mb-1">Ready for Guests</p>
-                  <h3 className="text-2xl font-black">{tasks.filter(t => t.status === 'Inspected').length} Rooms</h3>
-                </div>
+
+            <Card className="bg-violet-900/40 border-violet-700/50 hover:bg-violet-900/60 transition-colors">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-violet-300">Categories</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white">{stats.categories}</div>
               </CardContent>
             </Card>
           </div>
 
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {tasks.map((task) => (
-                <Card 
-                  key={task.id} 
-                  className={cn(
-                    "border-none shadow-lg rounded-3xl overflow-hidden transition-all hover:scale-105 cursor-pointer",
-                    task.status === 'Pending' ? "bg-amber-50" :
-                    task.status === 'In Progress' ? "bg-blue-50" :
-                    task.status === 'Completed' ? "bg-emerald-50" :
-                    "bg-white"
-                  )}
-                  onClick={() => {
-                    if (task.status === 'Pending') handleStatusUpdate(task.id, task.room_id, 'In Progress');
-                    else if (task.status === 'In Progress') handleStatusUpdate(task.id, task.room_id, 'Completed');
-                    else if (task.status === 'Completed') handleStatusUpdate(task.id, task.room_id, 'Inspected');
-                  }}
+          {/* Add Supply Form */}
+          <Card className="bg-slate-800/50 border-slate-700/50 mb-8">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Plus className="w-5 h-5" />
+                Add New Supply Item
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleAddSupply} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">Item Name</label>
+                    <Input
+                      type="text"
+                      placeholder="e.g., Cleaning Detergent"
+                      value={itemName}
+                      onChange={(e) => setItemName(e.target.value)}
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-gray-500"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">Quantity</label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-gray-500"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">Unit</label>
+                    <Select value={unit} onValueChange={setUnit} disabled={loading}>
+                      <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pieces">Pieces</SelectItem>
+                        <SelectItem value="kg">Kilograms (kg)</SelectItem>
+                        <SelectItem value="liters">Liters (L)</SelectItem>
+                        <SelectItem value="boxes">Boxes</SelectItem>
+                        <SelectItem value="rolls">Rolls</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">Category</label>
+                    <Select value={category} onValueChange={setCategory} disabled={loading}>
+                      <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
                 >
-                  <CardContent className="p-6 text-center space-y-2">
-                    <h4 className="text-2xl font-black text-slate-900">Room {task.room_id}</h4>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{task.rooms?.type}</p>
-                    <Badge className={cn(
-                      "px-2 py-0.5 font-black uppercase text-[8px] tracking-widest rounded-lg",
-                      task.status === 'Pending' ? "bg-amber-500 text-white" :
-                      task.status === 'In Progress' ? "bg-blue-500 text-white" :
-                      task.status === 'Completed' ? "bg-emerald-500 text-white" :
-                      "bg-slate-500 text-white"
-                    )}>{task.status}</Badge>
+                  {loading ? 'Adding...' : 'Add Supply Item'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Supplies by Category */}
+          <div className="space-y-6">
+            {categories.map((category) => {
+              const categorySupplies = suppliesByCategory[category];
+              if (categorySupplies.length === 0) return null;
+
+              const categoryColors: any = {
+                'Cleaning': { badge: 'bg-blue-500/20 text-blue-300' },
+                'Linens': { badge: 'bg-purple-500/20 text-purple-300' },
+                'Equipment': { badge: 'bg-orange-500/20 text-orange-300' },
+                'Chemicals': { badge: 'bg-red-500/20 text-red-300' }
+              };
+
+              return (
+                <Card key={category} className="bg-slate-800/50 border-slate-700/50">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Badge className={categoryColors[category].badge}>{category}</Badge>
+                      <span className="text-sm text-gray-400">({categorySupplies.length} items)</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="border-slate-700/50">
+                            <TableHead className="text-gray-400">Item Name</TableHead>
+                            <TableHead className="text-gray-400">Stock Quantity</TableHead>
+                            <TableHead className="text-gray-400">Unit</TableHead>
+                            <TableHead className="text-gray-400">Status</TableHead>
+                            <TableHead className="text-gray-400 text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {categorySupplies.map((supply: any) => (
+                            <TableRow key={supply.id} className="border-slate-700/50">
+                              <TableCell className="text-gray-300">{supply.item_name}</TableCell>
+                              <TableCell className="text-gray-300">{supply.stock_quantity}</TableCell>
+                              <TableCell className="text-gray-300">{supply.unit}</TableCell>
+                              <TableCell>
+                                <Badge
+                                  className={
+                                    supply.stock_quantity < 10
+                                      ? 'bg-red-500/20 text-red-300'
+                                      : 'bg-green-500/20 text-green-300'
+                                  }
+                                >
+                                  {supply.stock_quantity < 10 ? 'Low Stock' : 'In Stock'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <button
+                                  onClick={() => handleDeleteSupply(supply.id)}
+                                  className="p-1 hover:bg-red-900/30 rounded transition-colors text-red-400"
+                                  title="Delete supply"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-          ) : (
-            <Card className="border-none shadow-2xl overflow-hidden bg-white rounded-[2.5rem]">
-              <CardHeader className="border-b px-8 py-6 flex flex-row items-center justify-between">
-                <CardTitle className="text-xl font-black">Cleaning Schedule</CardTitle>
-                <div className="relative w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <Input className="pl-9 h-10 bg-slate-50 border-none rounded-xl" placeholder="Search rooms..." />
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader className="bg-slate-50/50">
-                    <TableRow>
-                      <TableHead className="px-8 font-bold">Room</TableHead>
-                      <TableHead className="font-bold">Type</TableHead>
-                      <TableHead className="font-bold">Assigned Staff</TableHead>
-                      <TableHead className="font-bold">Status</TableHead>
-                      <TableHead className="text-right px-8 font-bold">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tasks.map((task) => (
-                      <TableRow key={task.id} className="hover:bg-slate-50/50 transition-colors">
-                        <TableCell className="px-8 font-black text-slate-900">Room {task.room_id}</TableCell>
-                        <TableCell><Badge variant="outline" className="font-bold">{task.rooms?.type}</Badge></TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <User size={14} className="text-slate-400" />
-                            <span className="text-sm font-bold text-slate-600">{task.staff_name || 'Unassigned'}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={cn(
-                            "px-3 py-1 font-black uppercase text-[10px] tracking-widest rounded-lg",
-                            task.status === 'Pending' ? "bg-amber-100 text-amber-700" :
-                            task.status === 'In Progress' ? "bg-blue-100 text-blue-700" :
-                            task.status === 'Completed' ? "bg-emerald-100 text-emerald-700" :
-                            "bg-slate-100 text-slate-700"
-                          )}>{task.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right px-8">
-                          <div className="flex justify-end gap-2">
-                            {task.status === 'Pending' && (
-                              <Button size="sm" className="bg-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'In Progress')} disabled={loading}>Start</Button>
-                            )}
-                            {task.status === 'In Progress' && (
-                              <Button size="sm" className="bg-emerald-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Completed')} disabled={loading}>Finish</Button>
-                            )}
-                            {task.status === 'Completed' && (
-                              <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 font-bold rounded-xl" onClick={() => handleStatusUpdate(task.id, task.room_id, 'Inspected')} disabled={loading}>Inspect</Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              );
+            })}
+
+            {supplies.length === 0 && (
+              <Card className="bg-slate-800/50 border-slate-700/50">
+                <CardContent className="pt-8 text-center">
+                  <p className="text-gray-400">No supplies added yet. Add your first supply item above.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </main>
+
         <Footer />
-      </main>
+      </div>
     </div>
   );
 };

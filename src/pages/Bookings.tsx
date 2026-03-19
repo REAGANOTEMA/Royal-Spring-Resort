@@ -14,9 +14,16 @@ import {
   CheckCircle2,
   LogOut,
   Clock,
+  TrendingUp,
+  Users,
+  DollarSign,
+  Filter,
+  Edit,
+  Eye,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -32,9 +39,12 @@ import { Booking } from "../types/index";
 
 const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const fetchBookings = async () => {
     const { data, error } = await supabase
@@ -43,12 +53,45 @@ const Bookings: React.FC = () => {
       .order("created_at", { ascending: false });
 
     if (error) showError(error.message);
-    else setBookings(data as Booking[]);
+    else {
+      setBookings(data as Booking[]);
+      applyFilters(data as Booking[], searchTerm, statusFilter);
+    }
   };
 
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  const applyFilters = (data: Booking[], search: string, status: string) => {
+    let filtered = data;
+
+    // Status filter
+    if (status !== "All") {
+      filtered = filtered.filter(b => b.status === status);
+    }
+
+    // Search filter
+    if (search) {
+      filtered = filtered.filter(b =>
+        b.guest?.toLowerCase().includes(search.toLowerCase()) ||
+        b.room?.toString().includes(search) ||
+        b.email?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredBookings(filtered);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    applyFilters(bookings, value, statusFilter);
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setStatusFilter(status);
+    applyFilters(bookings, searchTerm, status);
+  };
 
   const handleStatusUpdate = async (id: string, roomId: string, newStatus: string) => {
     try {
@@ -90,75 +133,239 @@ const Bookings: React.FC = () => {
     setIsDeleteModalOpen(false);
   };
 
+  // Calculate statistics
+  const stats = {
+    total: bookings.length,
+    confirmed: bookings.filter(b => b.status === "Confirmed").length,
+    checkedIn: bookings.filter(b => b.status === "Checked In").length,
+    checkedOut: bookings.filter(b => b.status === "Checked Out").length,
+    totalRevenue: bookings.reduce((acc, b) => {
+      const amount = typeof b.amount === 'string' ? parseFloat(b.amount.replace(/,/g, '')) : b.amount;
+      return acc + (isNaN(amount) ? 0 : amount);
+    }, 0)
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-800">Reservations & Front Desk</h2>
-          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setIsModalOpen(true)}>
-            <Plus size={18} className="mr-2" /> New Reservation
-          </Button>
+        <header className="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-xl text-white">
+              <CalendarIcon size={24} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-slate-900">Reservations & Front Desk</h2>
+              <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Booking Management System</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button className="bg-blue-600 hover:bg-blue-700 font-black h-12 px-6 rounded-xl shadow-lg" onClick={() => setIsModalOpen(true)}>
+              <Plus size={18} className="mr-2" /> NEW RESERVATION
+            </Button>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
+          </div>
         </header>
 
-        <div className="p-8 space-y-6">
-          <Card className="border-none shadow-sm overflow-hidden">
+        <div className="p-8 space-y-8">
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-600 font-bold uppercase mb-1">Total Bookings</p>
+                    <p className="text-3xl font-black text-slate-900">{stats.total}</p>
+                  </div>
+                  <div className="p-3 bg-blue-100 rounded-xl">
+                    <CalendarIcon size={24} className="text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-600 font-bold uppercase mb-1">Confirmed</p>
+                    <p className="text-3xl font-black text-blue-600">{stats.confirmed}</p>
+                  </div>
+                  <div className="p-3 bg-blue-100 rounded-xl">
+                    <CheckCircle2 size={24} className="text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-600 font-bold uppercase mb-1">Checked In</p>
+                    <p className="text-3xl font-black text-emerald-600">{stats.checkedIn}</p>
+                  </div>
+                  <div className="p-3 bg-emerald-100 rounded-xl">
+                    <LogOut size={24} className="text-emerald-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-600 font-bold uppercase mb-1">Checked Out</p>
+                    <p className="text-3xl font-black text-slate-600">{stats.checkedOut}</p>
+                  </div>
+                  <div className="p-3 bg-slate-100 rounded-xl">
+                    <Clock size={24} className="text-slate-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-600 font-bold uppercase mb-1">Total Revenue</p>
+                    <p className="text-2xl font-black text-purple-600">{stats.totalRevenue.toLocaleString()}</p>
+                  </div>
+                  <div className="p-3 bg-purple-100 rounded-xl">
+                    <DollarSign size={24} className="text-purple-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Search and Filters */}
+          <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden p-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Input
+                  placeholder="Search by guest name, room, or email..."
+                  className="pl-12 h-12 rounded-xl bg-slate-50 border-none"
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {["All", "Confirmed", "Checked In", "Checked Out"].map(status => (
+                  <button
+                    key={status}
+                    onClick={() => handleStatusFilterChange(status)}
+                    className={cn(
+                      "px-4 py-2 rounded-xl font-bold text-sm transition-all",
+                      statusFilter === status
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    )}
+                  >
+                    <Filter size={14} className="inline mr-2" />
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          {/* Bookings Table */}
+          <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
+            <CardHeader className="border-b px-8 py-6">
+              <CardTitle className="text-xl font-black">Reservations ({filteredBookings.length})</CardTitle>
+            </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader className="bg-slate-50">
-                  <TableRow>
-                    <TableHead className="font-bold">Guest Name</TableHead>
-                    <TableHead className="font-bold">Room</TableHead>
-                    <TableHead className="font-bold">Status</TableHead>
-                    <TableHead className="font-bold text-right">Amount</TableHead>
-                    <TableHead className="font-bold text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bookings.map((booking) => (
-                    <TableRow key={booking.id} className="hover:bg-slate-50/50">
-                      <TableCell className="font-semibold">{booking.guest}</TableCell>
-                      <TableCell>Room {booking.room}</TableCell>
-                      <TableCell>
-                        <Badge className={cn(
-                          "px-2 py-0.5 font-medium rounded-full",
-                          booking.status === "Confirmed" ? "bg-blue-100 text-blue-700" :
-                          booking.status === "Checked In" ? "bg-green-100 text-green-700" :
-                          "bg-gray-100 text-gray-700"
-                        )}>
-                          {booking.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-bold">{booking.amount}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {booking.status === "Confirmed" && (
-                            <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleStatusUpdate(booking.id, booking.room, "Checked In")}>
-                              <CheckCircle2 size={14} className="mr-1" /> Check In
-                            </Button>
-                          )}
-                          {booking.status === "Checked In" && (
-                            <Button size="sm" variant="outline" className="text-amber-600 border-amber-200 hover:bg-amber-50" onClick={() => handleStatusUpdate(booking.id, booking.room, "Checked Out")}>
-                              <LogOut size={14} className="mr-1" /> Check Out
-                            </Button>
-                          )}
-                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => { setSelectedId(booking.id); setIsDeleteModalOpen(true); }}>
-                            <Trash2 size={16} />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-slate-50/50">
+                    <TableRow>
+                      <TableHead className="px-8 font-bold">Guest Name</TableHead>
+                      <TableHead className="font-bold">Room</TableHead>
+                      <TableHead className="font-bold">Check-In</TableHead>
+                      <TableHead className="font-bold">Check-Out</TableHead>
+                      <TableHead className="font-bold">Status</TableHead>
+                      <TableHead className="text-right px-8 font-bold">Amount</TableHead>
+                      <TableHead className="text-right px-8 font-bold">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredBookings.length > 0 ? filteredBookings.map((booking) => (
+                      <TableRow key={booking.id} className="hover:bg-slate-50/50 transition-colors">
+                        <TableCell className="px-8 font-semibold">
+                          <div>
+                            <p className="font-black text-slate-900">{booking.guest}</p>
+                            <p className="text-xs text-slate-500">{booking.email}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-bold text-blue-600">Room {booking.room}</TableCell>
+                        <TableCell className="text-sm">
+                          {booking.check_in ? new Date(booking.check_in).toLocaleDateString() : "N/A"}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {booking.check_out ? new Date(booking.check_out).toLocaleDateString() : "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={cn(
+                            "px-2 py-0.5 font-black rounded-lg text-white",
+                            booking.status === "Confirmed" ? "bg-blue-600" :
+                            booking.status === "Checked In" ? "bg-emerald-600" :
+                            booking.status === "Checked Out" ? "bg-slate-600" :
+                            "bg-amber-600"
+                          )}>
+                            {booking.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right px-8 font-black text-purple-600">{booking.amount}</TableCell>
+                        <TableCell className="text-right px-8">
+                          <div className="flex justify-end gap-2">
+                            {booking.status === "Confirmed" && (
+                              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg" onClick={() => handleStatusUpdate(booking.id, booking.room, "Checked In")}>
+                                <CheckCircle2 size={14} className="mr-1" /> Check In
+                              </Button>
+                            )}
+                            {booking.status === "Checked In" && (
+                              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-black rounded-lg" onClick={() => handleStatusUpdate(booking.id, booking.room, "Checked Out")}>
+                                <LogOut size={14} className="mr-1" /> Check Out
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-700" title="View Details">
+                              <Eye size={16} />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700" onClick={() => { setSelectedId(booking.id); setIsDeleteModalOpen(true); }}>
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-slate-500 font-medium">
+                          No bookings found matching your criteria
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>
+
+        <BookingModal open={isModalOpen} onOpenChange={setIsModalOpen} onSuccess={fetchBookings} />
+        <DeleteDialog
+          open={isDeleteModalOpen}
+          onOpenChange={setIsDeleteModalOpen}
+          onConfirm={handleDelete}
+          title="Delete Reservation"
+          description="Are you sure you want to delete this reservation? This action cannot be undone."
+        />
+
         <Footer />
       </main>
-
-      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSuccess={fetchBookings} />
-      <DeleteDialog isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} />
     </div>
   );
 };

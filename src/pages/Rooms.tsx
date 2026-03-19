@@ -86,9 +86,12 @@ const Rooms: React.FC = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Manage Accommodations</p>
             </div>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold rounded-xl shadow-lg shadow-blue-900/20" onClick={() => setIsAddModalOpen(true)}>
-            <Plus size={18} className="mr-2" /> Add New Room
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold rounded-xl shadow-lg shadow-blue-900/20" onClick={() => setIsAddModalOpen(true)}>
+              <Plus size={18} className="mr-2" /> Add New Room
+            </Button>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
+          </div>
         </header>
 
         <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

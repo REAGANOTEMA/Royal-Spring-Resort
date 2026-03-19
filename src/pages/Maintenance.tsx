@@ -66,9 +66,12 @@ const Maintenance = () => {
               <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest">Technical Operations</p>
             </div>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-black rounded-xl shadow-lg" onClick={() => setIsAddModalOpen(true)}>
-            <Plus size={18} className="mr-2" /> New Ticket
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 font-black rounded-xl shadow-lg" onClick={() => setIsAddModalOpen(true)}>
+              <Plus size={18} className="mr-2" /> New Ticket
+            </Button>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
+          </div>
         </header>
 
         <div className="p-8 space-y-8">
