@@ -4,18 +4,34 @@ import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-
 
 /**
  * Initialize Supabase client (frontend-safe)
- * Uses NEXT_PUBLIC_ environment variables for URL & anon key
+ * Uses VITE_ environment variables (Vite) but also falls back to NEXT_PUBLIC_ for compatibility.
  */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl =
+  import.meta.env.VITE_SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  '';
+const supabaseKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
 
 // Check if keys are provided
 const isConfigured = Boolean(supabaseUrl && supabaseKey);
 
-export const supabase: SupabaseClient = createClient(
-  supabaseUrl || 'https://placeholder-project.supabase.co', 
-  supabaseKey || 'placeholder-key'
-);
+if (!isConfigured) {
+  // Fail fast: missing env vars cause silent "Failed to fetch" errors.
+  throw new Error(
+    '[supabase] Missing environment variables. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file or in your deployment environment (Render/Netlify/etc).' 
+  );
+}
+
+if (import.meta.env.DEV) {
+  console.log('[supabase] URL:', supabaseUrl);
+  console.log('[supabase] using anon key length:', supabaseKey.length);
+}
+
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+
 
 /**
  * ==============================

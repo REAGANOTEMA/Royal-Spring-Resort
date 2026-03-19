@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000, // Increase chunk size warning limit to 1000KB
+    // Increase warning limit for large chunks (does not change bundle output)
+    chunkSizeWarningLimit: 2000,
   },
   base: "./", // important for relative paths on Render
 });
