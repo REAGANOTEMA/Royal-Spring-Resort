@@ -6,36 +6,41 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Menu, Palmtree, Utensils, BedDouble, Camera, Leaf, Waves, ShieldCheck, ChevronRight, Quote, MapPin, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
-import AIChat from '@/components/AIChat';
-import VoiceConcierge from '@/components/VoiceConcierge';
+import AdvancedVoiceConcierge from '@/components/AdvancedVoiceConcierge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
 const heroSlides = [
   {
-    url: '/bed.jpg',
+    url: 'https://images.unsplash.com/photo-1578926078328-123c5e6dae57?auto=format&fit=crop&q=80&w=2000',
     title: 'Luxury Bedding',
-    subtitle: 'Rest your head on the finest linens and experience ultimate comfort in our premium suites.',
+    subtitle: 'Rest on the finest Egyptian cotton linens with premium comfort layers.',
   },
   {
-    url: '/hotel-house3.webp',
-    title: 'Royal Comfort',
+    url: 'https://images.unsplash.com/photo-1631049307038-da5ec5d083b1?auto=format&fit=crop&q=80&w=2000',
+    title: 'Premium Suites',
     subtitle: 'Indulge in our masterfully designed accommodations with breathtaking views.',
   },
   {
-    url: '/hotel-house1.webp',
-    title: 'Garden Sanctuary',
-    subtitle: 'Relax in our serene outdoor spaces surrounded by majestic tropical greenery.',
+    url: 'https://images.unsplash.com/photo-1585399334593-c5218a51baab?auto=format&fit=crop&q=80&w=2000',
+    title: 'World-Class Dining',
+    subtitle: 'Savor authentic Ugandan delicacies and international gourmet cuisine.',
   },
 ];
 
 const galleryImages = [
-  { src: '/hotel-house2.webp', title: 'Elegant Entrance', category: 'Facility' },
-  { src: '/hotel-house4.webp', title: 'Poolside Lounge', category: 'Amenities' },
-  { src: '/hotel-house5.webp', title: 'Garden Pathways', category: 'Nature' },
-  { src: '/hotel-house6.webp', title: 'Dining Area', category: 'Dining' },
-  { src: '/hotel-house8.webp', title: 'Resort View', category: 'Views' },
-  { src: '/water-spring.webp', title: 'Natural Springs', category: 'Nature' },
+  { src: 'https://images.unsplash.com/photo-1578926078328-123c5e6dae57?auto=format&fit=crop&q=80&w=800', title: 'Luxury Bedding', category: 'Rooms' },
+  { src: 'https://images.unsplash.com/photo-1631049307038-da5ec5d083b1?auto=format&fit=crop&q=80&w=800', title: 'Suite View', category: 'Rooms' },
+  { src: 'https://images.unsplash.com/photo-1554116682-8aa147e1989b?auto=format&fit=crop&q=80&w=800', title: 'Fine Dining', category: 'Dining' },
+  { src: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800', title: 'Gourmet Cuisine', category: 'Dining' },
+  { src: 'https://images.unsplash.com/photo-1585399334593-c5218a51baab?auto=format&fit=crop&q=80&w=800', title: 'Restaurant Ambiance', category: 'Dining' },
+  { src: 'https://images.unsplash.com/photo-1632778149955-e89aae19dac8?auto=format&fit=crop&q=80&w=800', title: 'Poolside Resort', category: 'Amenities' },
+  { src: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&q=80&w=800', title: 'Floor Bed Elegance', category: 'Rooms' },
+  { src: 'https://images.unsplash.com/photo-1606521299816-bda78ef14510?auto=format&fit=crop&q=80&w=800', title: 'Luxury Interior', category: 'Rooms' },
+  { src: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&q=80&w=800', title: 'Premium Breakfast', category: 'Dining' },
+  { src: 'https://images.unsplash.com/photo-1504674900941-0026dba5f582?auto=format&fit=crop&q=80&w=800', title: 'Spa & Wellness', category: 'Amenities' },
+  { src: 'https://images.unsplash.com/photo-1534080564897-61794bdd92da?auto=format&fit=crop&q=80&w=800', title: 'Garden Paradise', category: 'Nature' },
+  { src: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=800', title: 'Sunset Terrace', category: 'Views' },
 ];
 
 const testimonials = [
@@ -266,8 +271,7 @@ const Index = () => {
       </section>
 
       <Footer />
-      <AIChat />
-      <VoiceConcierge context="guest" />
+      <AdvancedVoiceConcierge context="guest" />
     </div>
   );
 };

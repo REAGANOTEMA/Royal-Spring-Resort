@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import VoiceConcierge, { useRoyalVoice } from "@/components/VoiceConcierge";
+import AdvancedVoiceConcierge, { useAdvancedVoice } from "@/components/AdvancedVoiceConcierge";
 import { 
   LayoutDashboard, 
   BedDouble, 
@@ -37,7 +37,7 @@ const Dashboard = () => {
     occupancyRate: 0
   });
   const [recentLogs, setRecentLogs] = useState<any[]>([]);
-  const { speak } = useRoyalVoice();
+  const { speak } = useAdvancedVoice();
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || 'Executive';
@@ -256,7 +256,7 @@ const Dashboard = () => {
         </div>
         <Footer />
       </main>
-      <VoiceConcierge context="staff" userName={userName} />
+      <AdvancedVoiceConcierge context="staff" userName={userName} />
     </div>
   );
 };
