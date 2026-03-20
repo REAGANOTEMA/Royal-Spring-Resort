@@ -12,7 +12,7 @@ import ImageModal from '@/components/ImageModal';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
-// Hero images - only using available images with "-hero" in name
+// Hero images - ALL images with "hero" in the name
 const heroSlides = [
   {
     url: '/bed-hero.jpg',
@@ -25,28 +25,43 @@ const heroSlides = [
     subtitle: '5-star standard bedding and masterfully designed suites for your ultimate comfort.',
   },
   {
-    url: '/src/assets/apartment-hero.JPG',
+    url: '/apartment-hero.JPG',
     title: 'Executive Living',
     subtitle: 'Spacious apartments with modern amenities for extended stays.',
   },
   {
-    url: '/src/assets/green-hero.JPG',
+    url: '/green-hero.JPG',
     title: 'Natural Serenity',
     subtitle: 'Surrounded by lush tropical gardens and pristine natural beauty.',
   },
   {
-    url: '/src/assets/hero-hotel-view.JPG',
+    url: '/hero-hotel-view.JPG',
     title: 'Resort Paradise',
     subtitle: 'A breathtaking panoramic view of our world-class resort facilities.',
   },
+  {
+    url: '/bedHhero1.jpg',
+    title: 'Royal Comfort',
+    subtitle: 'Experience unparalleled comfort in our premium bedding and luxury suites.',
+  },
+  {
+    url: '/bedhero2.jpg',
+    title: 'Elegant Living',
+    subtitle: 'Sophisticated interiors and premium amenities for the discerning traveler.',
+  },
 ];
 
-// Gallery images - only using available images from both public and assets folders
+// Gallery images - ALL remaining images from public folder
 const galleryImages = [
-  // Public folder images
-  { src: '/bed-hero.jpg', title: 'Royal Master Suite', category: 'Rooms' },
+  // Bedroom Images
+  { src: '/bed-1.JPG', title: 'Royal Bed Suite', category: 'Rooms' },
+  { src: '/bed-2.JPG', title: 'Executive Bedroom', category: 'Rooms' },
+  { src: '/bed-4.JPG', title: 'Presidential Bedroom', category: 'Rooms' },
+  { src: '/bed-5.JPG', title: 'Deluxe Bedroom', category: 'Rooms' },
   { src: '/bed2.jpg', title: 'Deluxe Comfort', category: 'Rooms' },
   { src: '/bed4.jpg', title: 'Premium Bedding', category: 'Rooms' },
+  
+  // Hotel Architecture
   { src: '/hotel-house1.webp', title: 'Evening Ambiance', category: 'Resort' },
   { src: '/hotel-house2.webp', title: 'Tropical Gardens', category: 'Nature' },
   { src: '/hotel-house3.webp', title: 'Resort Entrance', category: 'Architecture' },
@@ -54,33 +69,35 @@ const galleryImages = [
   { src: '/hotel-house5.webp', title: 'Fine Dining Area', category: 'Dining' },
   { src: '/hotel-house6.webp', title: 'Garden Terrace', category: 'Nature' },
   { src: '/hotel-house8.webp', title: 'Sunset Views', category: 'Resort' },
-  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
-  { src: '/bathroom-hero2.webp', title: 'Spa-Style Bathrooms', category: 'Luxury' },
+  { src: '/hotel-road.JPG', title: 'Resort Access Road', category: 'Architecture' },
+  { src: '/hotel-view.JPG', title: 'Panoramic Hotel View', category: 'Architecture' },
+  
+  // Bathroom & Luxury
   { src: '/bathroom1.webp', title: 'Luxury Bathroom', category: 'Luxury' },
   
-  // Assets folder images
-  { src: '/src/assets/apartment-hero.JPG', title: 'Apartment Living', category: 'Suites' },
-  { src: '/src/assets/apartment-view.JPG', title: 'Apartment View', category: 'Suites' },
-  { src: '/src/assets/bed-1.JPG', title: 'Royal Bed Suite', category: 'Rooms' },
-  { src: '/src/assets/bed-2.JPG', title: 'Executive Bedroom', category: 'Rooms' },
-  { src: '/src/assets/bed-4.JPG', title: 'Presidential Bedroom', category: 'Rooms' },
-  { src: '/src/assets/bed-5.JPG', title: 'Deluxe Bedroom', category: 'Rooms' },
-  { src: '/src/assets/cahir$table-in-garden1.JPG', title: 'Garden Dining', category: 'Dining' },
-  { src: '/src/assets/conference-room1.JPG', title: 'Conference Facilities', category: 'Business' },
-  { src: '/src/assets/free-garden.JPG', title: 'Free Garden Space', category: 'Nature' },
-  { src: '/src/assets/garden-greens.JPG', title: 'Lush Garden Greens', category: 'Nature' },
-  { src: '/src/assets/garden-view.JPG', title: 'Scenic Garden View', category: 'Nature' },
-  { src: '/src/assets/garden1.JPG', title: 'Tropical Garden', category: 'Nature' },
-  { src: '/src/assets/green-hero.JPG', title: 'Green Paradise', category: 'Nature' },
-  { src: '/src/assets/hero-hotel-view.JPG', title: 'Resort Overview', category: 'Architecture' },
-  { src: '/src/assets/hotel-road.JPG', title: 'Resort Access Road', category: 'Architecture' },
-  { src: '/src/assets/hotel-view.JPG', title: 'Panoramic Hotel View', category: 'Architecture' },
-  { src: '/src/assets/road-post.JPG', title: 'Scenic Road Post', category: 'Nature' },
-  { src: '/src/assets/road-to-apartment.JPG', title: 'Apartment Access', category: 'Architecture' },
-  { src: '/src/assets/road-view.JPG', title: 'Mountain Road View', category: 'Nature' },
-  { src: '/src/assets/waterfall1.JPG', title: 'Waterfall Paradise', category: 'Nature' },
-  { src: '/src/assets/waterfall2.JPG', title: 'Crystal Waterfall', category: 'Nature' },
-  { src: '/src/assets/waterfall3.JPG', title: 'Serene Waterfall', category: 'Nature' },
+  // Amenities
+  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
+  
+  // Apartment Views
+  { src: '/apartment-view.JPG', title: 'Apartment View', category: 'Suites' },
+  
+  // Garden & Nature
+  { src: '/cahir$table-in-garden1.JPG', title: 'Garden Dining', category: 'Dining' },
+  { src: '/conference-room1.JPG', title: 'Conference Facilities', category: 'Business' },
+  { src: '/free-garden.JPG', title: 'Free Garden Space', category: 'Nature' },
+  { src: '/garden-greens.JPG', title: 'Lush Garden Greens', category: 'Nature' },
+  { src: '/garden-view.JPG', title: 'Scenic Garden View', category: 'Nature' },
+  { src: '/garden1.JPG', title: 'Tropical Garden', category: 'Nature' },
+  
+  // Road & Access
+  { src: '/road-post.JPG', title: 'Scenic Road Post', category: 'Nature' },
+  { src: '/road-to-apartment.JPG', title: 'Apartment Access', category: 'Architecture' },
+  { src: '/road-view.JPG', title: 'Mountain Road View', category: 'Nature' },
+  
+  // Waterfalls
+  { src: '/waterfall1.JPG', title: 'Waterfall Paradise', category: 'Nature' },
+  { src: '/waterfall2.JPG', title: 'Crystal Waterfall', category: 'Nature' },
+  { src: '/waterfall3.JPG', title: 'Serene Waterfall', category: 'Nature' },
 ];
 
 const testimonials = [
@@ -252,17 +269,17 @@ const Index = () => {
             <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
               <h3 className="text-2xl font-black text-slate-900 mb-3">Bedding Standards</h3>
               <p className="text-slate-600 mb-4">Egyptian cotton linens, hypoallergenic pillows, and nightly turndown service for a royal sleep.</p>
-              <img src="/src/assets/bed-2.JPG" alt="Luxury Bedding" className="rounded-2xl w-full h-48 object-cover" />
+              <img src="/bed-2.JPG" alt="Luxury Bedding" className="rounded-2xl w-full h-48 object-cover" />
             </div>
             <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
               <h3 className="text-2xl font-black text-slate-900 mb-3">Gourmet Cuisine</h3>
               <p className="text-slate-600 mb-4">24/7 chef-driven menus featuring seasonal Ugandan specialties and international favorites.</p>
-              <img src="/src/assets/cahir$table-in-garden1.JPG" alt="Gourmet Food" className="rounded-2xl w-full h-48 object-cover" />
+              <img src="/cahir$table-in-garden1.JPG" alt="Gourmet Food" className="rounded-2xl w-full h-48 object-cover" />
             </div>
             <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
               <h3 className="text-2xl font-black text-slate-900 mb-3">Perfect Leisure</h3>
               <p className="text-slate-600 mb-4">Temperature-controlled pool and poolside cabanas set for a resort-grade experience.</p>
-              <img src="/src/assets/waterfall2.JPG" alt="Swimming Pool" className="rounded-2xl w-full h-48 object-cover" />
+              <img src="/waterfall2.JPG" alt="Swimming Pool" className="rounded-2xl w-full h-48 object-cover" />
             </div>
           </div>
         </div>
@@ -353,7 +370,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-96 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/bed-1.JPG" alt="Royal Bed Suite" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/bed-1.JPG" alt="Royal Bed Suite" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-blue-400 uppercase tracking-widest">Deluxe</p>
@@ -362,7 +379,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-96 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/bed-4.JPG" alt="Presidential Bedroom" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/bed-4.JPG" alt="Presidential Bedroom" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-blue-400 uppercase tracking-widest">Presidential</p>
@@ -371,7 +388,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-96 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/apartment-hero.JPG" alt="Apartment Living" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/apartment-hero.JPG" alt="Apartment Living" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-blue-400 uppercase tracking-widest">Apartment</p>
@@ -392,7 +409,7 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/garden-greens.JPG" alt="Lush Garden Greens" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/garden-greens.JPG" alt="Lush Garden Greens" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Nature</p>
@@ -401,7 +418,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/free-garden.JPG" alt="Free Garden Space" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/free-garden.JPG" alt="Free Garden Space" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Recreation</p>
@@ -410,7 +427,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/green-hero.JPG" alt="Green Paradise" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/green-hero.JPG" alt="Green Paradise" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Paradise</p>
@@ -419,7 +436,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/garden-view.JPG" alt="Scenic Garden View" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/garden-view.JPG" alt="Scenic Garden View" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Scenic</p>
@@ -428,7 +445,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/garden1.JPG" alt="Tropical Garden" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/garden1.JPG" alt="Tropical Garden" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Tropical</p>
@@ -437,7 +454,7 @@ const Index = () => {
               </div>
             </div>
             <div className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl">
-              <img src="/src/assets/cahir$table-in-garden1.JPG" alt="Garden Dining" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/cahir$table-in-garden1.JPG" alt="Garden Dining" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-emerald-400 uppercase tracking-widest">Dining</p>
@@ -458,7 +475,7 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="group relative h-96 rounded-[2rem] overflow-hidden shadow-xl lg:col-span-2">
-              <img src="/src/assets/waterfall1.JPG" alt="Waterfall Paradise" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src="/waterfall1.JPG" alt="Waterfall Paradise" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
                 <div className="space-y-2">
                   <p className="text-xs font-black text-cyan-400 uppercase tracking-widest">Main Attraction</p>
@@ -468,7 +485,7 @@ const Index = () => {
             </div>
             <div className="space-y-8">
               <div className="group relative h-44 rounded-[2rem] overflow-hidden shadow-xl">
-                <img src="/src/assets/waterfall2.JPG" alt="Crystal Waterfall" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <img src="/waterfall2.JPG" alt="Crystal Waterfall" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-6">
                   <div className="space-y-2">
                     <p className="text-xs font-black text-cyan-400 uppercase tracking-widest">Crystal</p>
@@ -477,7 +494,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="group relative h-44 rounded-[2rem] overflow-hidden shadow-xl">
-                <img src="/src/assets/waterfall3.JPG" alt="Serene Waterfall" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <img src="/waterfall3.JPG" alt="Serene Waterfall" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-6">
                   <div className="space-y-2">
                     <p className="text-xs font-black text-cyan-400 uppercase tracking-widest">Serene</p>
