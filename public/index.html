@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO Meta Tags -->
+    <title>Royal Springs Resort - Uganda's Premier Luxury Destination</title>
+    <meta name="description" content="Experience ultimate luxury at Royal Springs Resort - Uganda's premier destination for hospitality, relaxation, and world-class amenities.">
+    <meta name="keywords" content="Royal Springs Resort, Uganda luxury hotel, Iganga accommodation, hospitality, spa, golf, fine dining">
+    <meta name="author" content="Royal Springs Resort">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Royal Springs Resort - Uganda's Premier Luxury Destination">
+    <meta property="og:description" content="Experience ultimate luxury at Royal Springs Resort - Uganda's premier destination for hospitality and relaxation.">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:url" content="https://royalspringsresort.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Royal Springs Resort">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Royal Springs Resort - Uganda's Premier Luxury Destination">
+    <meta name="twitter:description" content="Experience ultimate luxury at Royal Springs Resort - Uganda's premier destination for hospitality and relaxation.">
+    <meta name="twitter:image" content="/logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/logo.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/logo.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-TileColor" content="#2563eb">
+    
+    <!-- Apple Touch Bar -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Royal Springs">
+    
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileImage" content="/logo.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <!-- Critical CSS -->
+    <style>
+        /* Critical CSS for immediate rendering */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: #ffffff;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top: 3px solid transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Hide content until loaded */
+        #app {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+        
+        #app.loaded {
+            opacity: 1;
+        }
+    </style>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Hotel",
+        "name": "Royal Springs Resort",
+        "description": "Experience ultimate luxury at Royal Springs Resort - Uganda's premier destination for hospitality and relaxation.",
+        "url": "https://royalspringsresort.com",
+        "telephone": "+256 772 572 645",
+        "email": "info@royalspringsresort.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Iganga, after Nakalama trading center",
+            "addressLocality": "along Tororo road",
+            "addressCountry": "Uganda"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "250"
+        },
+        "priceRange": "$$$",
+        "starRating": {
+            "@type": "Rating",
+            "ratingValue": "5"
+        },
+        "amenityFeature": [
+            "Swimming Pool",
+            "Spa",
+            "Golf Course",
+            "Fine Dining",
+            "Tropical Gardens",
+            "Waterfalls",
+            "Luxury Suites"
+        ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Main App Container -->
+    <div id="app">
+        <!-- React App will mount here -->
+    </div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        // Enhanced PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('🚀 Royal Springs Resort PWA Registered:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            console.log('🔄 New service worker found');
+                            const installingWorker = registration.installing;
+                            installingWorker.addEventListener('statechange', () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Show update notification
+                                    if (confirm('New version available! Refresh to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                        
+                        // Handle push notifications
+                        if ('PushManager' in window) {
+                            registration.pushManager.getSubscription()
+                                .then((subscription) => {
+                                    if (!subscription) {
+                                        console.log('📬 User not subscribed to push notifications');
+                                    } else {
+                                        console.log('✅ User subscribed to push notifications');
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log('❌ Push subscription error:', error);
+                                });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
+        } else {
+            console.log('⚠️ Service Workers not supported');
+        }
+        
+        // Hide loading screen when app is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                const app = document.getElementById('app');
+                
+                if (loading && app) {
+                    loading.style.opacity = '0';
+                    setTimeout(() => {
+                        loading.style.display = 'none';
+                        app.classList.add('loaded');
+                    }, 300);
+                }
+            }, 1000);
+        });
+        
+        // Install prompt detection
+        let deferredPrompt = null;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('📱 Install prompt detected');
+        });
+        
+        // Handle install button clicks
+        window.installApp = function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ App installed successfully');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        };
+        
+        // iOS Install Detection
+        window.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        window.isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                           window.navigator.standalone || 
+                           document.referrer.includes('android-app://');
+        
+        // Show iOS install instructions if needed
+        if (window.isIOS && !window.isStandalone) {
+            console.log('📱 iOS device detected, showing install instructions');
+        }
+        
+        // Performance monitoring
+        window.addEventListener('online', () => {
+            console.log('🌐 Connection restored');
+            document.body.classList.remove('offline');
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('📡 Connection lost');
+            document.body.classList.add('offline');
+        });
+        
+        // Handle visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                console.log('👁️ App became visible');
+                // Refresh data when app becomes visible
+            }
+        });
+        
+        // Error handling
+        window.addEventListener('error', (e) => {
+            console.error('❌ Global error:', e.error);
+        });
+        
+        // Unhandled promise rejections
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('❌ Unhandled promise rejection:', e.reason);
+        });
+    </script>
+</body>
+</html>

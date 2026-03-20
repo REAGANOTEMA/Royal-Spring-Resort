@@ -1,23 +1,76 @@
-// Service Worker for Royal Springs Hotel PWA
-// Handles offline functionality, caching, and app shell
+// 🚀 **Advanced Service Worker - Universal PWA Support**
+// Enables offline functionality, caching, and background sync
 
-const CACHE_VERSION = 'royal-springs-v1';
-const CACHE_NAME = `${CACHE_VERSION}`;
-const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
-const IMAGE_CACHE = `images-${CACHE_VERSION}`;
+const CACHE_NAME = 'royal-springs-resort-v1';
+const STATIC_CACHE = 'static-v1';
+const DYNAMIC_CACHE = 'dynamic-v1';
 
-// Assets to cache on install
+// Assets to cache for offline access
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/logo.png',
-  '/robots.txt',
-  '/browserconfig.xml',
+  // All hero images
+  '/bed-hero.jpg',
+  '/bathroom-hero2.webp',
+  '/apartment-hero.JPG',
+  '/green-hero.JPG',
+  '/hero-hotel-view.JPG',
+  '/bedHhero1.jpg',
+  '/bedhero2.jpg',
+  // All gallery images
+  '/bed-1.JPG',
+  '/bed-2.JPG',
+  '/bed-4.JPG',
+  '/bed-5.JPG',
+  '/bed2.jpg',
+  '/bed4.jpg',
+  '/hotel-house1.webp',
+  '/hotel-house2.webp',
+  '/hotel-house3.webp',
+  '/hotel-house4.webp',
+  '/hotel-house5.webp',
+  '/hotel-house6.webp',
+  '/hotel-house8.webp',
+  '/hotel-road.JPG',
+  '/hotel-view.JPG',
+  '/bathroom1.webp',
+  '/water-spring.webp',
+  '/apartment-view.JPG',
+  '/cahir$table-in-garden1.JPG',
+  '/conference-room1.JPG',
+  '/free-garden.JPG',
+  '/garden-greens.JPG',
+  '/garden-view.JPG',
+  '/garden1.JPG',
+  '/road-post.JPG',
+  '/road-to-apartment.JPG',
+  '/road-view.JPG',
+  '/waterfall1.JPG',
+  '/waterfall2.JPG',
+  '/waterfall3.JPG'
 ];
 
 // Install event - cache essential assets
 self.addEventListener('install', (event) => {
+  console.log('🚀 Royal Springs Resort PWA Installing...');
+  
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => {
+      return Promise.all(
+        STATIC_ASSETS.map((url) => {
+          return cache.add(url).catch((error) => {
+            console.warn(`Failed to cache ${url}:`, error);
+          });
+        })
+      );
+    }).then(() => {
+      console.log('✅ Static assets cached successfully');
+      self.skipWaiting();
+    })
+  );
+});
   console.log('[ServiceWorker] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
