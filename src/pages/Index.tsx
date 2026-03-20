@@ -9,6 +9,8 @@ import Footer from '@/components/Footer';
 import AdvancedVoiceConcierge from '@/components/AdvancedVoiceConcierge';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import ImageModal from '@/components/ImageModal';
+import Attractions from '@/components/Attractions';
+import Button3D from '@/components/Button3D';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
@@ -277,13 +279,6 @@ const Index = () => {
               <img src="/cahir$table-in-garden1.JPG" alt="Gourmet Food" className="rounded-2xl w-full h-48 object-cover" />
             </div>
             <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
-              <h3 className="text-2xl font-black text-slate-900 mb-3">Perfect Leisure</h3>
-              <p className="text-slate-600 mb-4">Temperature-controlled pool and poolside cabanas set for a resort-grade experience.</p>
-              <img src="/waterfall2.JPG" alt="Swimming Pool" className="rounded-2xl w-full h-48 object-cover" />
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Gallery Section */}
       <section id="gallery" className="py-32 bg-slate-50">
