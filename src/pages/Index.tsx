@@ -12,83 +12,51 @@ import ImageModal from '@/components/ImageModal';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
+// Hero images - only using available images with "-hero" in name
 const heroSlides = [
   {
-    url: '/hotel-house.webp',
+    url: '/bed-hero.jpg',
     title: 'Royal Springs Resort',
     subtitle: 'Experience the pinnacle of Ugandan hospitality in a sanctuary of lush greenery and serene luxury.',
   },
   {
-    url: '/bed-hero.jpg',
+    url: '/bathroom-hero2.webp',
     title: 'Luxury Redefined',
     subtitle: '5-star standard bedding and masterfully designed suites for your ultimate comfort.',
   },
   {
-    url: '/water-spring.webp',
-    title: 'Natural Serenity',
-    subtitle: 'Relax by our crystal-clear springs and immerse yourself in the tranquility of nature.',
-  },
-  {
-    url: '/hotel-house1.webp',
-    title: 'Evening Paradise',
-    subtitle: 'Witness breathtaking sunsets and magical evening ambiance at our tropical paradise.',
-  },
-  {
-    url: '/hotel-house2.webp',
-    title: 'Tropical Oasis',
-    subtitle: 'Lush gardens and pristine landscapes creating a perfect escape from the everyday.',
-  },
-  {
-    url: '/bathroom-hero2.webp',
-    title: 'Spa Excellence',
-    subtitle: 'Indulge in our world-class spa facilities and rejuvenate your senses.',
-  },
-  {
-    url: '/bedHhero1.jpg',
-    title: 'Royal Comfort',
-    subtitle: 'Experience unparalleled comfort in our premium bedding and luxury suites.',
-  },
-  {
-    url: '/bedhero2.jpg',
-    title: 'Elegant Living',
-    subtitle: 'Sophisticated interiors and premium amenities for the discerning traveler.',
-  },
-  {
     url: '/src/assets/apartment-hero.JPG',
-    title: 'Executive Apartments',
-    subtitle: 'Spacious living spaces with modern amenities for extended stays.',
+    title: 'Executive Living',
+    subtitle: 'Spacious apartments with modern amenities for extended stays.',
   },
   {
     url: '/src/assets/green-hero.JPG',
-    title: 'Green Paradise',
+    title: 'Natural Serenity',
     subtitle: 'Surrounded by lush tropical gardens and pristine natural beauty.',
   },
   {
     url: '/src/assets/hero-hotel-view.JPG',
-    title: 'Resort Overview',
+    title: 'Resort Paradise',
     subtitle: 'A breathtaking panoramic view of our world-class resort facilities.',
   },
 ];
 
+// Gallery images - only using available images from both public and assets folders
 const galleryImages = [
   // Public folder images
-  { src: '/hotel-house.webp', title: 'Main Resort Wing', category: 'Architecture' },
   { src: '/bed-hero.jpg', title: 'Royal Master Suite', category: 'Rooms' },
+  { src: '/bed2.jpg', title: 'Deluxe Comfort', category: 'Rooms' },
+  { src: '/bed4.jpg', title: 'Premium Bedding', category: 'Rooms' },
   { src: '/hotel-house1.webp', title: 'Evening Ambiance', category: 'Resort' },
-  { src: '/bed1.jpg', title: 'Deluxe Comfort', category: 'Rooms' },
   { src: '/hotel-house2.webp', title: 'Tropical Gardens', category: 'Nature' },
-  { src: '/bathroom-hero2.webp', title: 'Spa-Style Bathrooms', category: 'Luxury' },
   { src: '/hotel-house3.webp', title: 'Resort Entrance', category: 'Architecture' },
-  { src: '/bed2.jpg', title: 'Premium Bedding', category: 'Rooms' },
   { src: '/hotel-house4.webp', title: 'Garden Walkways', category: 'Nature' },
   { src: '/hotel-house5.webp', title: 'Fine Dining Area', category: 'Dining' },
-  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
-  { src: '/hotel-house8.webp', title: 'Sunset Views', category: 'Resort' },
-  { src: '/bed3.jpg', title: 'Executive Suite', category: 'Rooms' },
-  { src: '/bed4.jpg', title: 'Presidential Suite', category: 'Rooms' },
   { src: '/hotel-house6.webp', title: 'Garden Terrace', category: 'Nature' },
+  { src: '/hotel-house8.webp', title: 'Sunset Views', category: 'Resort' },
+  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
+  { src: '/bathroom-hero2.webp', title: 'Spa-Style Bathrooms', category: 'Luxury' },
   { src: '/bathroom1.webp', title: 'Luxury Bathroom', category: 'Luxury' },
-  { src: '/bed.jpg', title: 'Comfort Suite', category: 'Rooms' },
   
   // Assets folder images
   { src: '/src/assets/apartment-hero.JPG', title: 'Apartment Living', category: 'Suites' },
@@ -307,25 +275,60 @@ const Index = () => {
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter uppercase">Photo Gallery</h2>
             <p className="text-slate-500 text-lg font-medium">Explore the beauty and elegance of Royal Springs Resort through our curated collection.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {galleryImages.map((image, index) => (
               <motion.div
                 key={index}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => openModal(index)}
-                className="group relative h-72 rounded-xl overflow-hidden shadow-lg cursor-pointer"
+                className="group relative h-72 rounded-xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300 hover:shadow-2xl"
               >
                 <img
                   src={image.src}
                   alt={image.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
-                  <div className="space-y-1">
-                    <p className="text-xs font-black text-blue-400 uppercase tracking-widest">{image.category}</p>
-                    <h3 className="text-lg font-black text-white">{image.title}</h3>
+                
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {/* Content overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-blue-400 uppercase tracking-widest bg-blue-400/20 px-2 py-1 rounded-full">
+                        {image.category}
+                      </span>
+                      <span className="text-xs text-white/80">
+                        {index + 1} of {galleryImages.length}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-black text-white leading-tight">
+                      {image.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-white/80 text-xs">
+                      <Camera size={14} />
+                      <span>Click to view full size</span>
+                    </div>
                   </div>
                 </div>
+                
+                {/* Hover border effect */}
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400/50 rounded-xl transition-all duration-300" />
+                
+                {/* Loading state */}
+                <div className="absolute inset-0 bg-slate-100 animate-pulse" />
+                <img
+                  src={image.src}
+                  alt={image.title}
+                  className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300"
+                  onLoad={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.previousElementSibling?.remove();
+                  }}
+                />
               </motion.div>
             ))}
           </div>

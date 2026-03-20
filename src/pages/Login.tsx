@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { showSuccess, showError } from "@/utils/toast";
 import { cn } from "@/lib/utils";
-import { supabase, auth, supabaseConfig } from "@/lib/supabase";
+import { supabase, auth, db, supabaseConfig } from "@/lib/supabase";
 import { EnhancedSignUpForm } from "@/components/EnhancedSignUpForm";
 
 const roles = [
@@ -83,18 +83,16 @@ const AuthPage = () => {
 
         // Read from staff table for stronger RBAC and department assignment
         try {
-          const { data: staffRecord } = await supabase
-            .from('staff')
-            .select('department, staff_level')
-            .or(`auth_email.eq.${email},email.eq.${email}`)
-            .single();
+          const staffRecord = await db.from('staff').select('department, staff_level').eq('auth_email', email).single();
 
-          if (staffRecord) {
-            userDepartment = staffRecord.department || '';
-            userRole = staffRecord.staff_level || userRole;
+          if (staffRecord && staffRecord.data) {
+            userDepartment = staffRecord.data.department || '';
+            userRole = staffRecord.data.staff_level || userRole;
           }
         } catch (err) {
           console.warn("Could not fetch staff record:", err);
+          // If we can't fetch staff record due to permissions, continue with default role
+          console.log("Continuing with default role due to permission restrictions");
         }
 
         const userName = data.user?.user_metadata?.full_name || email.split('@')[0];
