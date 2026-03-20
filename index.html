@@ -2,12 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Royal Springs" />
+    
     <title>Royal Spring Hotel</title>
 
-    <!-- Favicon -->
+    <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="./logo.png" />
     <link rel="apple-touch-icon" href="./logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="shortcut icon" href="./logo.png" type="image/png" />
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -23,6 +30,7 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="Royal Spring Hotel – Luxury Resort with premium rooms, bookings, and services." />
     <meta name="keywords" content="Royal Spring Hotel, luxury resort, rooms, bookings, ERP system" />
+    <meta name="author" content="Royal Spring Hotel" />
 
     <!-- Open Graph Tags -->
     <meta property="og:title" content="Royal Spring Hotel" />
@@ -31,10 +39,23 @@
     <meta property="og:url" content="https://royal-spring-hotel.onrender.com" />
     <meta property="og:type" content="website" />
 
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Royal Spring Hotel" />
+    <meta name="twitter:description" content="Luxury Resort with premium rooms, bookings, and services." />
+    <meta name="twitter:image" content="https://royal-spring-hotel.onrender.com/logo.png" />
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- Tailwind / global styles are imported via React -->
+    <!-- Disable zoom on iOS for better mobile UX -->
+    <style>
+      input[type="date"],
+      input[type="time"],
+      input[type="email"] {
+        font-size: 16px;
+      }
+    </style>
   </head>
 
   <body class="bg-slate-50 font-sans">
@@ -43,5 +64,35 @@
 
     <!-- Vite will inject JS automatically -->
     <script type="module" src="./src/main.tsx"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then((registration) => {
+              console.log('ServiceWorker registration successful:', registration.scope);
+            })
+            .catch((err) => {
+              console.log('ServiceWorker registration failed:', err);
+            });
+        });
+      }
+
+      // Add to home screen prompt handler
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        console.log('Install prompt available');
+      });
+
+      // Optional: Listen for app installation
+      window.addEventListener('appinstalled', () => {
+        console.log('Royal Springs Hotel app installed successfully!');
+        deferredPrompt = null;
+      });
+    </script>
   </body>
 </html>
