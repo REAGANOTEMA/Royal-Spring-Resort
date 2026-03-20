@@ -13,6 +13,7 @@ const STATIC_ASSETS = [
   '/manifest.json',
   '/logo.png',
   '/robots.txt',
+  '/browserconfig.xml',
 ];
 
 // Install event - cache essential assets

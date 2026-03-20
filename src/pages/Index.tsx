@@ -7,6 +7,7 @@ import { Star, Menu, Palmtree, Utensils, BedDouble, Camera, Leaf, Waves, ShieldC
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
 import AdvancedVoiceConcierge from '@/components/AdvancedVoiceConcierge';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
@@ -106,6 +107,7 @@ const testimonials = [
 
 const Index = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -113,6 +115,18 @@ const Index = () => {
     }, 6000);
     return () => clearInterval(timer);
   }, []);
+
+  // Show install prompt after user scrolls a bit
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300 && !showInstallPrompt) {
+        setShowInstallPrompt(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [showInstallPrompt]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -494,6 +508,9 @@ const Index = () => {
 
       <Footer />
       <AdvancedVoiceConcierge context="guest" />
+      {showInstallPrompt && (
+        <PWAInstallPrompt onClose={() => setShowInstallPrompt(false)} />
+      )}
     </div>
   );
 };
