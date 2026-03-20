@@ -18,7 +18,8 @@ import {
   ArrowUpRight,
   Activity,
   Clock,
-  Mic
+  Mic,
+  Sparkles
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ const Dashboard = () => {
         occupancyRate: roomsCount ? Math.round((occupiedCount! / roomsCount!) * 100) : 0
       });
 
-      // 2. Fetch Recent Activity (Audit Logs)
+      // 2. Fetch Recent Activity
       const { data: logs } = await supabase
         .from('audit_logs')
         .select('*')
@@ -82,7 +83,7 @@ const Dashboard = () => {
       
       setRecentLogs(logs || []);
 
-      // 3. Fetch Employee Recognition (Employee of the Month + Promotions)
+      // 3. Fetch Employee Recognition
       const { data: eom } = await supabase
         .from('employee_recognition')
         .select('*')
@@ -99,8 +100,6 @@ const Dashboard = () => {
           .single();
 
         setEmployeeOfMonth({ ...winner, staff: winnerStaff });
-      } else {
-        setEmployeeOfMonth(null);
       }
 
       const { data: promotionData } = await supabase
@@ -108,26 +107,28 @@ const Dashboard = () => {
         .select('*')
         .eq('recognition_type', 'promotion')
         .order('effective_date', { ascending: false })
-        .limit(5);
+        .limit(3);
 
-      const promotedStaffIds = (promotionData || []).map((item) => item.staff_id);
-      const { data: promotedStaff } = await supabase
-        .from('staff')
-        .select('id, name, department, avatar_url')
-        .in('id', promotedStaffIds);
+      if (promotionData) {
+        const promotedStaffIds = promotionData.map((item) => item.staff_id);
+        const { data: promotedStaff } = await supabase
+          .from('staff')
+          .select('id, name, department, avatar_url')
+          .in('id', promotedStaffIds);
 
-      const promotionsWithStaff = (promotionData || []).map((item) => ({
-        ...item,
-        staff: (promotedStaff || []).find((staff) => staff.id === item.staff_id) || null,
-      }));
-      setRecentPromotions(promotionsWithStaff);
+        const promotionsWithStaff = promotionData.map((item) => ({
+          ...item,
+          staff: (promotedStaff || []).find((staff) => staff.id === item.staff_id) || null,
+        }));
+        setRecentPromotions(promotionsWithStaff);
+      }
     };
 
     fetchDashboardData();
   }, []);
 
   const handleBriefing = () => {
-    const briefingText = `Good day, ${userName}. Here is your executive briefing. Our current occupancy rate is ${stats.occupancyRate} percent, with ${stats.occupiedRooms} rooms occupied. Daily revenue has reached ${stats.dailyRevenue.toLocaleString()} shillings. There are ${stats.pendingIncidents} pending incidents requiring your attention. All ${stats.totalStaff} staff members are currently on duty.`;
+    const briefingText = `Good day, ${userName}. Here is your executive briefing. Our current occupancy rate is ${stats.occupancyRate} percent. Daily revenue has reached ${stats.dailyRevenue.toLocaleString()} shillings. All systems are operational.`;
     speak(briefingText);
   };
 
@@ -152,15 +153,8 @@ const Dashboard = () => {
             >
               <Mic size={18} className="text-blue-400" /> DIRECTOR'S BRIEFING
             </Button>
-            <div className="text-right hidden md:block">
-              <p className="text-sm font-bold text-slate-900">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-              <div className="flex items-center justify-end gap-1.5">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest">System Live</p>
-              </div>
-            </div>
+            <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
           </div>
-          <img src="/logo.png" alt="Royal Springs" className="h-12 object-contain" />
         </header>
 
         <div className="p-8 space-y-8">
@@ -222,52 +216,53 @@ const Dashboard = () => {
           {/* Recognition highlights */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Card className="border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
-              <CardHeader className="bg-blue-50 px-6 py-4">
-                <CardTitle className="text-sm uppercase tracking-widest text-blue-500">Employee of the Month</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4">
+                <CardTitle className="text-sm uppercase tracking-widest flex items-center gap-2">
+                  <Sparkles size={16} /> Employee of the Month
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 {employeeOfMonth ? (
                   <div className="space-y-4">
-                    <p className="text-lg font-black text-slate-900">{employeeOfMonth.title}</p>
-                    <p className="text-sm text-slate-500">{new Date(employeeOfMonth.effective_date).toLocaleDateString()}</p>
-                    <div className="flex items-center gap-3">
-                      <img src={employeeOfMonth.staff?.avatar_url || '/profile-placeholder.png'} alt={employeeOfMonth.staff?.name} className="w-12 h-12 rounded-full object-cover" />
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-black text-2xl overflow-hidden">
+                        {employeeOfMonth.staff?.avatar_url ? (
+                          <img src={employeeOfMonth.staff.avatar_url} className="w-full h-full object-cover" />
+                        ) : employeeOfMonth.staff?.name.charAt(0)}
+                      </div>
                       <div>
-                        <p className="font-bold text-slate-900">{employeeOfMonth.staff?.name || 'Unknown'}</p>
-                        <p className="text-xs text-slate-500">{employeeOfMonth.staff?.department || 'Department'}</p>
+                        <p className="text-lg font-black text-slate-900">{employeeOfMonth.staff?.name}</p>
+                        <p className="text-xs text-blue-600 font-bold uppercase tracking-widest">{employeeOfMonth.staff?.department}</p>
                       </div>
                     </div>
-                    <p className="text-sm text-slate-600">{employeeOfMonth.notes || 'Outstanding performance, teamwork, and leadership in the current month.'}</p>
+                    <p className="text-sm text-slate-600 italic">"{employeeOfMonth.notes || 'Outstanding performance and dedication to excellence.'}"</p>
                   </div>
                 ) : (
-                  <p className="text-slate-500">No employee of the month assigned yet.</p>
+                  <p className="text-slate-500 text-center py-4">No recognition set for this month.</p>
                 )}
               </CardContent>
             </Card>
 
             <Card className="lg:col-span-2 border-none shadow-xl bg-white rounded-[2rem] overflow-hidden">
-              <CardHeader className="bg-blue-50 px-6 py-4">
-                <CardTitle className="text-sm uppercase tracking-widest text-blue-500">Recent Promotions</CardTitle>
+              <CardHeader className="bg-slate-900 text-white px-6 py-4">
+                <CardTitle className="text-sm uppercase tracking-widest">Recent Promotions</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-3">
-                {recentPromotions.length > 0 ? (
-                  recentPromotions.map((promo) => (
-                    <div key={promo.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="flex items-center gap-3 mb-2">
-                        <img src={promo.staff?.avatar_url || '/profile-placeholder.png'} alt={promo.staff?.name} className="w-9 h-9 rounded-full object-cover" />
-                        <div>
-                          <p className="font-bold text-slate-900">{promo.staff?.name || 'TBD'}</p>
-                          <p className="text-xs text-slate-500">{promo.staff?.department || 'Department'}</p>
-                        </div>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {recentPromotions.length > 0 ? recentPromotions.map((promo) => (
+                    <div key={promo.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black">
+                        {promo.staff?.name.charAt(0)}
                       </div>
-                      <p className="text-sm font-semibold text-slate-700">{promo.title}</p>
-                      <p className="text-xs text-slate-500">Effective: {new Date(promo.effective_date).toLocaleDateString()}</p>
-                      <p className="text-sm text-slate-600 mt-1">{promo.notes || 'Recognition for consistent productivity and excellent conduct.'}</p>
+                      <div>
+                        <p className="font-bold text-slate-900">{promo.staff?.name}</p>
+                        <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest">{promo.title}</p>
+                      </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-slate-500">No promotions recorded yet.</p>
-                )}
+                  )) : (
+                    <p className="text-slate-500 col-span-2 text-center py-4">No recent promotions recorded.</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -293,15 +288,6 @@ const Dashboard = () => {
                     <div className="flex items-center gap-4">
                       <Receipt size={24} />
                       <span className="text-sm tracking-widest">GENERATE INVOICE</span>
-                    </div>
-                    <ArrowUpRight size={20} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Button>
-                </Link>
-                <Link to="/reports">
-                  <Button variant="outline" className="w-full justify-between h-16 border-slate-200 hover:border-blue-600 hover:text-blue-600 rounded-2xl font-black transition-all group px-6">
-                    <div className="flex items-center gap-4">
-                      <Activity size={24} />
-                      <span className="text-sm tracking-widest">VIEW ANALYTICS</span>
                     </div>
                     <ArrowUpRight size={20} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Button>
@@ -342,7 +328,7 @@ const Dashboard = () => {
                       <CheckCircle2 size={40} className="text-slate-200" />
                     </div>
                     <h4 className="text-slate-900 font-black mb-2">All Systems Operational</h4>
-                    <p className="text-slate-500 text-sm max-w-xs font-medium">Your resort is running smoothly. New activities will appear here as they happen.</p>
+                    <p className="text-slate-500 text-sm max-w-xs font-medium">Your resort is running smoothly.</p>
                   </div>
                 )}
               </CardContent>

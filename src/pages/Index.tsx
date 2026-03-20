@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Menu, Palmtree, Utensils, BedDouble, Camera, Leaf, Waves, ShieldCheck, ChevronRight, Quote, MapPin, Phone, Mail } from 'lucide-react';
+import { Star, Menu, Palmtree, Utensils, BedDouble, Camera, Leaf, Waves, ShieldCheck, ChevronRight, Quote, MapPin, Phone, Mail, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
 import AdvancedVoiceConcierge from '@/components/AdvancedVoiceConcierge';
@@ -12,40 +12,35 @@ import { cn } from '@/lib/utils';
 
 const heroSlides = [
   {
-    url: '/bed-hero.jpg',
-    title: 'Luxury Bedding',
-    subtitle: '5-star standard hotel linen, deluxe pillows, and ergonomic mattresses for the best sleep.',
+    url: '/hotel-house.webp',
+    title: 'Royal Springs Resort',
+    subtitle: 'Experience the pinnacle of Ugandan hospitality in a sanctuary of lush greenery and serene luxury.',
   },
   {
-    url: '/hotel-house.webp',
-    title: 'Royal Resort Living',
-    subtitle: 'Experience the grandeur of Royal Springs with our breathtaking architecture and lush landscapes.',
+    url: '/bed-hero.jpg',
+    title: 'Luxury Redefined',
+    subtitle: '5-star standard bedding and masterfully designed suites for your ultimate comfort.',
   },
   {
     url: '/water-spring.webp',
     title: 'Natural Serenity',
-    subtitle: 'Relax by our crystal-clear waters and experience the true essence of tranquility.',
+    subtitle: 'Relax by our crystal-clear springs and immerse yourself in the tranquility of nature.',
   },
 ];
 
 const galleryImages = [
+  { src: '/hotel-house.webp', title: 'Main Resort Wing', category: 'Architecture' },
   { src: '/bed-hero.jpg', title: 'Royal Master Suite', category: 'Rooms' },
-  { src: '/bed.jpg', title: 'Luxury Bedding Standard', category: 'Rooms' },
-  { src: '/bed1.jpg', title: 'Deluxe Suite Bedding', category: 'Rooms' },
-  { src: '/bed2.jpg', title: 'Premium Comfort', category: 'Rooms' },
-  { src: '/bed3.jpg', title: 'Executive Sleep Experience', category: 'Rooms' },
-  { src: '/bed4.jpg', title: 'Royal Bedding', category: 'Rooms' },
-  { src: '/hotel-house.webp', title: 'Royal Springs Estate', category: 'Resort' },
-  { src: '/hotel-house1.webp', title: 'Resort Architecture', category: 'Resort' },
-  { src: '/hotel-house2.webp', title: 'Garden View', category: 'Resort' },
-  { src: '/hotel-house3.webp', title: 'Main Wing', category: 'Resort' },
-  { src: '/hotel-house4.webp', title: 'Resort Exterior', category: 'Resort' },
-  { src: '/hotel-house5.webp', title: 'Dining Area', category: 'Dining' },
-  { src: '/hotel-house6.webp', title: 'Peaceful Surroundings', category: 'Resort' },
-  { src: '/hotel-house8.webp', title: 'Evening Glow', category: 'Resort' },
-  { src: '/bathroom-hero2.webp', title: 'Executive Bathroom', category: 'Rooms' },
-  { src: '/bathroom1.webp', title: 'Spa-style Bathroom', category: 'Rooms' },
-  { src: '/water-spring.webp', title: 'Water Spring View', category: 'Amenities' },
+  { src: '/hotel-house1.webp', title: 'Evening Ambiance', category: 'Resort' },
+  { src: '/bed1.jpg', title: 'Deluxe Comfort', category: 'Rooms' },
+  { src: '/hotel-house2.webp', title: 'Tropical Gardens', category: 'Nature' },
+  { src: '/bathroom-hero2.webp', title: 'Spa-Style Bathrooms', category: 'Luxury' },
+  { src: '/hotel-house3.webp', title: 'Resort Entrance', category: 'Architecture' },
+  { src: '/bed2.jpg', title: 'Premium Bedding', category: 'Rooms' },
+  { src: '/hotel-house4.webp', title: 'Garden Walkways', category: 'Nature' },
+  { src: '/hotel-house5.webp', title: 'Fine Dining Area', category: 'Dining' },
+  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
+  { src: '/hotel-house8.webp', title: 'Sunset Views', category: 'Resort' },
 ];
 
 const testimonials = [
@@ -58,7 +53,7 @@ const testimonials = [
   {
     name: "David Okello",
     role: "Business Executive",
-    text: "World-class service and impeccable attention to detail. Royal Springs is my home in Kampala.",
+    text: "World-class service and impeccable attention to detail. Royal Springs is my home in Iganga.",
     avatar: "https://i.pravatar.cc/150?u=david"
   },
   {
@@ -128,10 +123,10 @@ const Index = () => {
               {[1, 2, 3, 4, 5].map(i => <Star key={i} size={20} fill="currentColor" />)}
             </div>
           </motion.div>
-          <motion.h1 key={`t-${currentSlide}`} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-6xl md:text-9xl font-black text-white mb-6 leading-none tracking-tighter uppercase">
+          <motion.h1 key={`t-${currentSlide}`} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-8xl font-black text-white mb-6 leading-none tracking-tighter uppercase">
             {heroSlides[currentSlide].title}
           </motion.h1>
-          <motion.p key={`s-${currentSlide}`} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl md:text-2xl text-slate-200 mb-10 max-w-3xl mx-auto font-medium">
+          <motion.p key={`s-${currentSlide}`} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-lg md:text-xl text-slate-200 mb-10 max-w-3xl mx-auto font-medium">
             {heroSlides[currentSlide].subtitle}
           </motion.p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -176,21 +171,52 @@ const Index = () => {
             <p className="text-slate-500 text-lg">Dedicated to world-class comfort in beddings, food, snacks and pool leisure for every Royal Springs guest.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="border p-8 rounded-3xl shadow-lg">
+            <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
               <h3 className="text-2xl font-black text-slate-900 mb-3">Bedding Standards</h3>
-              <p className="text-slate-600 mb-4">Egyptian cotton linens, hypoallergenic pillows, adjustable mattress firmness options, nightly turndown service, and rigorous hygiene audit per room.</p>
+              <p className="text-slate-600 mb-4">Egyptian cotton linens, hypoallergenic pillows, and nightly turndown service for a royal sleep.</p>
               <img src="/bed.jpg" alt="Luxury Bedding" className="rounded-2xl w-full h-48 object-cover" />
             </div>
-            <div className="border p-8 rounded-3xl shadow-lg">
-              <h3 className="text-2xl font-black text-slate-900 mb-3">Food & Snacks</h3>
-              <p className="text-slate-600 mb-4">24/7 chef-driven menus, seasonal Ugandan specialties, health-conscious snacks, dessert platters and snack boxes with local flavors.</p>
+            <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
+              <h3 className="text-2xl font-black text-slate-900 mb-3">Gourmet Cuisine</h3>
+              <p className="text-slate-600 mb-4">24/7 chef-driven menus featuring seasonal Ugandan specialties and international favorites.</p>
               <img src="/hotel-house5.webp" alt="Gourmet Food" className="rounded-2xl w-full h-48 object-cover" />
             </div>
-            <div className="border p-8 rounded-3xl shadow-lg">
-              <h3 className="text-2xl font-black text-slate-900 mb-3">Perfect Swimming Pool</h3>
-              <p className="text-slate-600 mb-4">Temperature-controlled pool, lifeguard cover, lane zones, poolside cabanas, beach towel service and nightly lighting set for a resort-grade experience.</p>
+            <div className="border p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
+              <h3 className="text-2xl font-black text-slate-900 mb-3">Perfect Leisure</h3>
+              <p className="text-slate-600 mb-4">Temperature-controlled pool and poolside cabanas set for a resort-grade experience.</p>
               <img src="/water-spring.webp" alt="Swimming Pool" className="rounded-2xl w-full h-48 object-cover" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section id="gallery" className="py-32 bg-slate-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter uppercase">Photo Gallery</h2>
+            <p className="text-slate-500 text-lg font-medium">Explore the beauty and elegance of Royal Springs Resort through our curated collection.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {galleryImages.map((image, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl cursor-pointer"
+              >
+                <img
+                  src={image.src}
+                  alt={image.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
+                  <div className="space-y-2">
+                    <p className="text-xs font-black text-blue-400 uppercase tracking-widest">{image.category}</p>
+                    <h3 className="text-2xl font-black text-white">{image.title}</h3>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -230,14 +256,14 @@ const Index = () => {
             <div className="space-y-10">
               <div>
                 <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter uppercase">Find Paradise</h2>
-                <p className="text-slate-500 text-lg font-medium">Located in the heart of Uganda's natural beauty, Royal Springs Resort is easily accessible yet worlds away.</p>
+                <p className="text-slate-500 text-lg font-medium">Located in the heart of Iganga, Royal Springs Resort is easily accessible yet worlds away.</p>
               </div>
               <div className="space-y-6">
                 <div className="flex items-start gap-6">
                   <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl"><MapPin size={28} /></div>
                   <div>
                     <h4 className="font-black uppercase tracking-tight text-slate-900">Our Address</h4>
-                    <p className="text-slate-500">Iganga, after Nakalama trading center along Tororo road at the right side of the road</p>
+                    <p className="text-slate-500">Iganga, after Nakalama trading center along Tororo road</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-6">
@@ -267,37 +293,6 @@ const Index = () => {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section id="gallery" className="py-32 bg-slate-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter uppercase">Photo Gallery</h2>
-            <p className="text-slate-500 text-lg font-medium">Explore the beauty and elegance of Royal Springs Resort through our curated collection of stunning photography.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {galleryImages.map((image, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                className="group relative h-80 rounded-[2rem] overflow-hidden shadow-xl cursor-pointer"
-              >
-                <img
-                  src={image.src}
-                  alt={image.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-8">
-                  <div className="space-y-2">
-                    <p className="text-xs font-black text-blue-400 uppercase tracking-widest">{image.category}</p>
-                    <h3 className="text-2xl font-black text-white">{image.title}</h3>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
