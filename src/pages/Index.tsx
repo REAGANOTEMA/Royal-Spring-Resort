@@ -60,10 +60,14 @@ const galleryImages = [
   { src: '/bed-2.JPG', title: 'Executive Bedroom', category: 'Rooms' },
   { src: '/bed-4.JPG', title: 'Presidential Bedroom', category: 'Rooms' },
   { src: '/bed-5.JPG', title: 'Deluxe Bedroom', category: 'Rooms' },
+  { src: '/bed-hero.jpg', title: 'Premium Bed Hero', category: 'Rooms' },
   { src: '/bed2.jpg', title: 'Deluxe Comfort', category: 'Rooms' },
   { src: '/bed4.jpg', title: 'Premium Bedding', category: 'Rooms' },
+  { src: '/bedhero2.jpg', title: 'Cozy Bedroom', category: 'Rooms' },
+  { src: '/bedHhero1.jpg', title: 'Royal Bedroom Suite', category: 'Rooms' },
   
   // Hotel Architecture
+  { src: '/hero-hotel-view.JPG', title: 'Hotel Grand View', category: 'Architecture' },
   { src: '/hotel-house1.webp', title: 'Evening Ambiance', category: 'Resort' },
   { src: '/hotel-house2.webp', title: 'Tropical Gardens', category: 'Nature' },
   { src: '/hotel-house3.webp', title: 'Resort Entrance', category: 'Architecture' },
@@ -76,11 +80,10 @@ const galleryImages = [
   
   // Bathroom & Luxury
   { src: '/bathroom1.webp', title: 'Luxury Bathroom', category: 'Luxury' },
-  
-  // Amenities
-  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
+  { src: '/bathroom-hero2.webp', title: 'Premium Bath Suite', category: 'Luxury' },
   
   // Apartment Views
+  { src: '/apartment-hero.JPG', title: 'Apartment Hero', category: 'Suites' },
   { src: '/apartment-view.JPG', title: 'Apartment View', category: 'Suites' },
   
   // Garden & Nature
@@ -90,13 +93,15 @@ const galleryImages = [
   { src: '/garden-greens.JPG', title: 'Lush Garden Greens', category: 'Nature' },
   { src: '/garden-view.JPG', title: 'Scenic Garden View', category: 'Nature' },
   { src: '/garden1.JPG', title: 'Tropical Garden', category: 'Nature' },
+  { src: '/green-hero.JPG', title: 'Green Paradise', category: 'Nature' },
   
   // Road & Access
   { src: '/road-post.JPG', title: 'Scenic Road Post', category: 'Nature' },
   { src: '/road-to-apartment.JPG', title: 'Apartment Access', category: 'Architecture' },
   { src: '/road-view.JPG', title: 'Mountain Road View', category: 'Nature' },
   
-  // Waterfalls
+  // Waterfalls & Water
+  { src: '/water-spring.webp', title: 'The Water Spring', category: 'Amenities' },
   { src: '/waterfall1.JPG', title: 'Waterfall Paradise', category: 'Nature' },
   { src: '/waterfall2.JPG', title: 'Crystal Waterfall', category: 'Nature' },
   { src: '/waterfall3.JPG', title: 'Serene Waterfall', category: 'Nature' },
@@ -337,16 +342,11 @@ const Index = () => {
                 {/* Hover border effect */}
                 <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400/50 rounded-xl transition-all duration-300" />
                 
-                {/* Loading state */}
-                <div className="absolute inset-0 bg-slate-100 animate-pulse" />
                 <img
                   src={image.src}
                   alt={image.title}
-                  className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300"
-                  onLoad={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.previousElementSibling?.remove();
-                  }}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
                 />
               </motion.div>
             ))}
